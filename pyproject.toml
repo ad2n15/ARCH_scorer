@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "arch-scorer"
+version = "0.1.0"
+description = "ARCH21 noncoding somatic vs germline scorer (AlphaGenome companion)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Ahmed" }]
+dependencies = [
+  "numpy>=1.24",
+  "pandas>=2.0",
+  "scikit-learn>=1.3",
+  "xgboost>=2.0",
+  "joblib>=1.3",
+  "requests>=2.31",
+  "alphagenome>=0.1.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[project.scripts]
+arch-score = "arch_scorer.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+arch_scorer = ["py.typed"]

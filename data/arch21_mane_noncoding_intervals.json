@@ -1,0 +1,338 @@
+{
+  "ASXL1": {
+    "transcript_id": "ENST00000375687.10",
+    "chrom": "20",
+    "strand": "+",
+    "tss": 32358331,
+    "promoter": [
+      32358131,
+      32358330
+    ],
+    "window": [
+      32358126,
+      32439324
+    ],
+    "n_introns": 12,
+    "n_utr_intervals": 2
+  },
+  "ASXL2": {
+    "transcript_id": "ENST00000435504.9",
+    "chrom": "2",
+    "strand": "-",
+    "tss": 25878487,
+    "promoter": [
+      25878488,
+      25878687
+    ],
+    "window": [
+      25733748,
+      25878692
+    ],
+    "n_introns": 12,
+    "n_utr_intervals": 2
+  },
+  "CBL": {
+    "transcript_id": "ENST00000264033.6",
+    "chrom": "11",
+    "strand": "+",
+    "tss": 119206339,
+    "promoter": [
+      119206139,
+      119206338
+    ],
+    "window": [
+      119206134,
+      119308154
+    ],
+    "n_introns": 15,
+    "n_utr_intervals": 2
+  },
+  "DNMT3A": {
+    "transcript_id": "ENST00000321117.10",
+    "chrom": "2",
+    "strand": "-",
+    "tss": 25341925,
+    "promoter": [
+      25341926,
+      25342125
+    ],
+    "window": [
+      25227869,
+      25342130
+    ],
+    "n_introns": 22,
+    "n_utr_intervals": 3
+  },
+  "ETNK1": {
+    "transcript_id": "ENST00000266517.9",
+    "chrom": "12",
+    "strand": "+",
+    "tss": 22625171,
+    "promoter": [
+      22624971,
+      22625170
+    ],
+    "window": [
+      22624966,
+      22690670
+    ],
+    "n_introns": 7,
+    "n_utr_intervals": 2
+  },
+  "GNAS": {
+    "transcript_id": "ENST00000371085.8",
+    "chrom": "20",
+    "strand": "+",
+    "tss": 58891421,
+    "promoter": [
+      58891221,
+      58891420
+    ],
+    "window": [
+      58891216,
+      58911197
+    ],
+    "n_introns": 12,
+    "n_utr_intervals": 2
+  },
+  "GNB1": {
+    "transcript_id": "ENST00000378609.9",
+    "chrom": "1",
+    "strand": "-",
+    "tss": 1891087,
+    "promoter": [
+      1891088,
+      1891287
+    ],
+    "window": [
+      1785281,
+      1891292
+    ],
+    "n_introns": 11,
+    "n_utr_intervals": 5
+  },
+  "IDH1": {
+    "transcript_id": "ENST00000345146.7",
+    "chrom": "2",
+    "strand": "-",
+    "tss": 208255071,
+    "promoter": [
+      208255072,
+      208255271
+    ],
+    "window": [
+      208236224,
+      208255276
+    ],
+    "n_introns": 9,
+    "n_utr_intervals": 4
+  },
+  "IDH2": {
+    "transcript_id": "ENST00000330062.8",
+    "chrom": "15",
+    "strand": "-",
+    "tss": 90102468,
+    "promoter": [
+      90102469,
+      90102668
+    ],
+    "window": [
+      90083040,
+      90102673
+    ],
+    "n_introns": 10,
+    "n_utr_intervals": 2
+  },
+  "JAK2": {
+    "transcript_id": "ENST00000381652.4",
+    "chrom": "9",
+    "strand": "+",
+    "tss": 4985272,
+    "promoter": [
+      4985072,
+      4985271
+    ],
+    "window": [
+      4985067,
+      5129953
+    ],
+    "n_introns": 24,
+    "n_utr_intervals": 4
+  },
+  "KIT": {
+    "transcript_id": "ENST00000288135.6",
+    "chrom": "4",
+    "strand": "+",
+    "tss": 54657957,
+    "promoter": [
+      54657757,
+      54657956
+    ],
+    "window": [
+      54657752,
+      54740720
+    ],
+    "n_introns": 20,
+    "n_utr_intervals": 2
+  },
+  "KRAS": {
+    "transcript_id": "ENST00000311936.8",
+    "chrom": "12",
+    "strand": "-",
+    "tss": 25250929,
+    "promoter": [
+      25250930,
+      25251129
+    ],
+    "window": [
+      25205241,
+      25251134
+    ],
+    "n_introns": 4,
+    "n_utr_intervals": 3
+  },
+  "MPL": {
+    "transcript_id": "ENST00000372470.9",
+    "chrom": "1",
+    "strand": "+",
+    "tss": 43337818,
+    "promoter": [
+      43337618,
+      43337817
+    ],
+    "window": [
+      43337613,
+      43354471
+    ],
+    "n_introns": 11,
+    "n_utr_intervals": 2
+  },
+  "NRAS": {
+    "transcript_id": "ENST00000369535.5",
+    "chrom": "1",
+    "strand": "-",
+    "tss": 114716771,
+    "promoter": [
+      114716772,
+      114716971
+    ],
+    "window": [
+      114704464,
+      114716976
+    ],
+    "n_introns": 6,
+    "n_utr_intervals": 5
+  },
+  "PPM1D": {
+    "transcript_id": "ENST00000305921.8",
+    "chrom": "17",
+    "strand": "+",
+    "tss": 60600193,
+    "promoter": [
+      60599993,
+      60600192
+    ],
+    "window": [
+      60599988,
+      60666285
+    ],
+    "n_introns": 5,
+    "n_utr_intervals": 2
+  },
+  "RUNX1": {
+    "transcript_id": "ENST00000675419.1",
+    "chrom": "21",
+    "strand": "-",
+    "tss": 35049302,
+    "promoter": [
+      35049303,
+      35049502
+    ],
+    "window": [
+      34787796,
+      35049507
+    ],
+    "n_introns": 8,
+    "n_utr_intervals": 3
+  },
+  "SETBP1": {
+    "transcript_id": "ENST00000649279.2",
+    "chrom": "18",
+    "strand": "+",
+    "tss": 44680888,
+    "promoter": [
+      44680688,
+      44680887
+    ],
+    "window": [
+      44680683,
+      45068515
+    ],
+    "n_introns": 5,
+    "n_utr_intervals": 3
+  },
+  "SF3B1": {
+    "transcript_id": "ENST00000335508.11",
+    "chrom": "2",
+    "strand": "-",
+    "tss": 197435028,
+    "promoter": [
+      197435029,
+      197435228
+    ],
+    "window": [
+      197389779,
+      197435233
+    ],
+    "n_introns": 24,
+    "n_utr_intervals": 2
+  },
+  "SRSF2": {
+    "transcript_id": "ENST00000359995.10",
+    "chrom": "17",
+    "strand": "-",
+    "tss": 76737331,
+    "promoter": [
+      76737332,
+      76737531
+    ],
+    "window": [
+      76734110,
+      76737536
+    ],
+    "n_introns": 2,
+    "n_utr_intervals": 3
+  },
+  "TET2": {
+    "transcript_id": "ENST00000380013.9",
+    "chrom": "4",
+    "strand": "+",
+    "tss": 105146876,
+    "promoter": [
+      105146676,
+      105146875
+    ],
+    "window": [
+      105146671,
+      105279808
+    ],
+    "n_introns": 10,
+    "n_utr_intervals": 4
+  },
+  "TP53": {
+    "transcript_id": "ENST00000269305.9",
+    "chrom": "17",
+    "strand": "-",
+    "tss": 7687490,
+    "promoter": [
+      7687491,
+      7687690
+    ],
+    "window": [
+      7668416,
+      7687695
+    ],
+    "n_introns": 10,
+    "n_utr_intervals": 3
+  }
+}
