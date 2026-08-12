@@ -147,6 +147,12 @@ def main(argv: list[str] | None = None) -> None:
         help="Run fold_1 emb extract then score (needs GPU + AG research stack)",
     )
     ap.add_argument("--emb-out", default=None, help="Where to write extracted emb .npy")
+    ap.add_argument("--fasta", default=None, help="hg38/GRCh38 FASTA (or ARCH_FASTA)")
+    ap.add_argument(
+        "--fold1-checkpoint",
+        default=None,
+        help="fold_1 weights dir (or ARCH_FOLD1_CKPT / artifacts/fold1_checkpoint_path.txt)",
+    )
     ap.add_argument("--cadd-phred", type=float, default=None)
     ap.add_argument("--func", default=None, help="ANNOVAR Func.refGene")
     ap.add_argument("--annovar-dir", default=None)
@@ -172,7 +178,13 @@ def main(argv: list[str] | None = None) -> None:
 
             out = Path(args.emb_out) if args.emb_out else Path("emb_diff.npy")
             emb = extract_fold1_diff(
-                args.chrom, args.pos, args.ref, args.alt, out_path=out
+                args.chrom,
+                args.pos,
+                args.ref,
+                args.alt,
+                out_path=out,
+                fasta=args.fasta,
+                checkpoint=args.fold1_checkpoint,
             )
         elif args.emb:
             emb = _load_emb(args.emb)
