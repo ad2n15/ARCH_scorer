@@ -28,6 +28,18 @@ bash scripts/install_annovar.sh
 export ANNOVAR_DIR=$PWD/annovar_install/annovar
 ```
 
+### AlphaGenome (for `api_baseline` / `api_only`)
+
+These models call the **hosted AlphaGenome API** (CD34+ track scores). Install/setup the official client and API key as documented by DeepMind:
+
+- Installation: https://github.com/google-deepmind/alphagenome#installation  
+- Then set `export ALPHA_GENOME_API_KEY=...` (or pass `--api-key`).
+
+`pip install -e .` already depends on the `alphagenome` Python package; follow the link above if you need a specific install path, extras, or key registration.
+
+**Not required** if you only run `emb_baseline` with a precomputed `--emb` file.  
+`--extract-emb` is a separate local fold_1 / research-stack path (not the hosted API).
+
 Maintainers — rebuild full-fit joblibs from `sm_ch_finetune`:
 
 ```bash
