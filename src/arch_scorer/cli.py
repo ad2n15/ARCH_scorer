@@ -108,6 +108,10 @@ def _score_one(
 
 
 def main(argv: list[str] | None = None) -> None:
+    from .env import load_dotenv
+
+    load_dotenv()
+
     ap = argparse.ArgumentParser(
         description=(
             "ARCH_scorer: somatic vs germline for ARCH21 MANE noncoding alleles. "

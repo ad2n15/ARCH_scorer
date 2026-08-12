@@ -35,16 +35,41 @@ bash scripts/install_annovar.sh
 export ANNOVAR_DIR=$PWD/annovar_install/annovar
 ```
 
-### AlphaGenome API client (for `api_baseline` / `api_only`)
+### API keys (`.env` — set once)
+
+Copy the template and edit (`.env` is gitignored):
+
+```bash
+cp .env.example .env
+```
+
+| Key | Needed for | How to get it |
+|-----|------------|---------------|
+| `ALPHA_GENOME_API_KEY` | `api_baseline`, `api_only` | Create/register at [AlphaGenome](https://deepmind.google.com/science/alphagenome) (see also [client install](https://github.com/google-deepmind/alphagenome#installation)) |
+| `KAGGLE_USERNAME` + `KAGGLE_KEY` | `python scripts/install_fold1.py` / `--extract-emb` only | [Kaggle settings → API → Create New Token](https://www.kaggle.com/settings); also **accept** [AlphaGenome model terms](https://www.kaggle.com/models/google/alphagenome) |
+
+Example `.env`:
+
+```bash
+ALPHA_GENOME_API_KEY=your_ag_api_key_here
+KAGGLE_USERNAME=your_kaggle_username
+KAGGLE_KEY=your_kaggle_api_token
+```
+
+`arch-score` and `install_fold1.py` auto-load `.env` from the repo root (or cwd). You can still `export` the same variables in your shell instead.
+
+- **API-only users** need only `ALPHA_GENOME_API_KEY`.
+- **Precomputed `--emb` only** need neither key.
+- Kaggle alternatively: place `~/.kaggle/kaggle.json` from the token download.
+
+### AlphaGenome API client
 
 - Installation: https://github.com/google-deepmind/alphagenome#installation  
-- `export ALPHA_GENOME_API_KEY=...` (or `--api-key`)
-
-Not required for `emb_baseline` with `--emb` or `--extract-emb`.
+- Key via `.env` as above, or `--api-key`
 
 ### fold_1 weights (for `--extract-emb`)
 
-Accept [Kaggle AlphaGenome model terms](https://www.kaggle.com/models/google/alphagenome), configure Kaggle API credentials, then:
+After Kaggle credentials are in `.env` (and model terms accepted):
 
 ```bash
 python scripts/install_fold1.py

@@ -35,10 +35,14 @@ def score_api_tracks(
     # Local tidy→wide helpers mirrored from sm_ch_finetune scorers (minimal)
     from alphagenome.models.dna_client import SEQUENCE_LENGTH_1MB
 
+    from .env import load_dotenv
+
+    load_dotenv()
+
     key = api_key or os.environ.get("ALPHA_GENOME_API_KEY") or os.environ.get("ALPHAGENOME_API_KEY")
     if not key:
         raise EnvironmentError(
-            "Set ALPHA_GENOME_API_KEY (or pass api_key=) for api+baseline scoring."
+            "Set ALPHA_GENOME_API_KEY in .env (see .env.example), or pass --api-key."
         )
     client = dna_client.create(key)
     chrom_chr = chrom if str(chrom).startswith("chr") else f"chr{chrom}"

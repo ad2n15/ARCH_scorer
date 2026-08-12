@@ -3,7 +3,7 @@
 
 Requires:
   - Accepted model terms: https://www.kaggle.com/models/google/alphagenome
-  - Kaggle credentials: ~/.kaggle/kaggle.json or KAGGLE_USERNAME + KAGGLE_KEY
+  - Kaggle credentials in `.env` (KAGGLE_USERNAME + KAGGLE_KEY) or ~/.kaggle/kaggle.json
 
 Usage:
   python scripts/install_fold1.py
@@ -15,16 +15,33 @@ export ARCH_FOLD1_CKPT=...
 from __future__ import annotations
 
 import argparse
+import os
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT_TXT = ROOT / "artifacts" / "fold1_checkpoint_path.txt"
+sys.path.insert(0, str(ROOT / "src"))
 
 
 def main() -> None:
+    from arch_scorer.env import load_dotenv
+
+    load_dotenv()
+
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--version", default="fold_1", help="Kaggle model version (default: fold_1)")
     args = ap.parse_args()
+
+    if not (os.environ.get("KAGGLE_USERNAME") and os.environ.get("KAGGLE_KEY")):
+        kaggle_json = Path.home() / ".kaggle" / "kaggle.json"
+        if not kaggle_json.is_file():
+            print(
+                "Warning: no KAGGLE_USERNAME/KAGGLE_KEY in env/.env and no "
+                f"{kaggle_json}. See README / .env.example.",
+                flush=True,
+            )
+
     try:
         import kagglehub
     except ImportError as e:
