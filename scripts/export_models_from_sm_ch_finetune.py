@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Fit full-cohort production models for ARCH_scorer (not 5-fold OOF).
+"""Fit full-cohort models for ARCH_scorer (not 5-fold OOF).
 
 Exports:
-  a) emb + baseline XGB  (+ gene one-hot)
-  b) api + baseline XGB  (+ gene one-hot)
+  a) emb + baseline XGB  (+ gene one-hot) — production
+  b) api + baseline XGB  (+ gene one-hot) — production, no local emb
+  c) api-only RF — interpretability (per-variant SHAP ranks of 10 tracks)
 
 Thresholds come from published 5-fold OOF pm_threshold (honest operating point),
 while classifiers / transforms are fit on ALL training alleles.
@@ -264,17 +265,81 @@ def fit_api(df: pd.DataFrame, y: np.ndarray, api_feats: list[str], oof: dict) ->
     return path
 
 
+def fit_api_only_rf(df: pd.DataFrame, y: np.ndarray, api_feats: list[str], oof: dict) -> Path:
+    """API-track-only RF for per-variant SHAP ranking (interpretability)."""
+    n_pos = int(y.sum())
+    api_imp = Pipeline([("imp", SimpleImputer(strategy="median"))])
+    Z = np.asarray(api_imp.fit_transform(df[api_feats]), dtype=np.float64)
+    clf = make_track_classifier("rf", random_state=SEED)
+    clf.fit(Z, y)
+    print(f"api-only RF fit Z={Z.shape}")
+    art = {
+        "model_name": "api_only_rf",
+        "feature_set": "api",
+        "emb_mode": None,
+        "emb_dim": None,
+        "pca_k": None,
+        "gene_feature": "none",
+        "baseline_cats": None,
+        "api_feats": api_feats,
+        "emb_pca": None,
+        "api_imp": api_imp,
+        "base_ct": None,
+        "clf": clf,
+        "pm_method": "prevalence_matched_top_k_from_oof",
+        "genes": ARCH21,
+        "n_train": int(len(df)),
+        "n_somatic": n_pos,
+        "seed": SEED,
+        **oof,
+    }
+    path = OUT_DIR / "api_only_rf.joblib"
+    joblib.dump(art, path)
+    meta = {k: v for k, v in art.items() if k not in ("emb_pca", "api_imp", "base_ct", "clf")}
+    (OUT_DIR / "api_only_rf.meta.json").write_text(json.dumps(meta, indent=2) + "\n")
+    print(f"Wrote {path}")
+    return path
+
+
 def main() -> None:
-    emb_oof = _oof_thr(EMB_OOF / "oof_summary.csv", "emb_base_xgb")
-    api_oof = _oof_thr(API_OOF / "oof_summary.csv", "api_baseline_xgb")
-    print("=== emb+baseline (full fit) ===")
-    print(f"OOF thr={emb_oof['pm_threshold']:.6f} auroc={emb_oof['oof_auroc']:.4f}")
-    df_e, y_e, emb_cols = load_emb_pooled()
-    fit_emb(df_e, y_e, emb_cols, emb_oof)
-    print("=== api+baseline (full fit) ===")
-    print(f"OOF thr={api_oof['pm_threshold']:.6f} auroc={api_oof['oof_auroc']:.4f}")
-    df_a, y_a, api_feats = load_api_pooled()
-    fit_api(df_a, y_a, api_feats, api_oof)
+    import argparse
+
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument(
+        "--only",
+        choices=("all", "emb_baseline", "api_baseline", "api_only"),
+        default="all",
+    )
+    args = ap.parse_args()
+
+    need_emb = args.only in ("all", "emb_baseline")
+    need_api = args.only in ("all", "api_baseline", "api_only")
+
+    df_a = y_a = api_feats = None
+    if need_api:
+        print("=== load api pooled ===")
+        df_a, y_a, api_feats = load_api_pooled()
+
+    if need_emb:
+        emb_oof = _oof_thr(EMB_OOF / "oof_summary.csv", "emb_base_xgb")
+        print("=== emb+baseline (full fit) ===")
+        print(f"OOF thr={emb_oof['pm_threshold']:.6f} auroc={emb_oof['oof_auroc']:.4f}")
+        df_e, y_e, emb_cols = load_emb_pooled()
+        fit_emb(df_e, y_e, emb_cols, emb_oof)
+
+    if args.only in ("all", "api_baseline"):
+        api_oof = _oof_thr(API_OOF / "oof_summary.csv", "api_baseline_xgb")
+        print("=== api+baseline (full fit) ===")
+        print(f"OOF thr={api_oof['pm_threshold']:.6f} auroc={api_oof['oof_auroc']:.4f}")
+        assert df_a is not None and api_feats is not None
+        fit_api(df_a, y_a, api_feats, api_oof)
+
+    if args.only in ("all", "api_only"):
+        api_rf_oof = _oof_thr(API_OOF / "oof_summary.csv", "api_rf")
+        print("=== api-only RF (interpretability) ===")
+        print(f"OOF thr={api_rf_oof['pm_threshold']:.6f} auroc={api_rf_oof['oof_auroc']:.4f}")
+        assert df_a is not None and api_feats is not None
+        fit_api_only_rf(df_a, y_a, api_feats, api_rf_oof)
 
 
 if __name__ == "__main__":

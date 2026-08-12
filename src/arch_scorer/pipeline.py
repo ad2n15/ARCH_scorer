@@ -1,4 +1,4 @@
-"""Score variants with full-fit emb+baseline or api+baseline XGB."""
+"""Score variants with emb+baseline, api+baseline, or api-only RF."""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -20,6 +20,21 @@ ARTIFACTS = {
     "emb_baseline_xgb": "emb_baseline_xgb_gene_onehot.joblib",
     "api_baseline": "api_baseline_xgb_gene_onehot.joblib",
     "api_baseline_xgb": "api_baseline_xgb_gene_onehot.joblib",
+    "api_only": "api_only_rf.joblib",
+    "api_only_rf": "api_only_rf.joblib",
+}
+
+SHORT_API = {
+    "CHIP_HISTONE__CL_0001059_Histone_ChIP_seq_H3K27ac__CenterMask": "H3K27ac",
+    "CHIP_HISTONE__CL_0001059_Histone_ChIP_seq_H3K27me3__CenterMask": "H3K27me3",
+    "CHIP_HISTONE__CL_0001059_Histone_ChIP_seq_H3K36me3__CenterMask": "H3K36me3",
+    "CHIP_HISTONE__CL_0001059_Histone_ChIP_seq_H3K4me1__CenterMask": "H3K4me1",
+    "CHIP_HISTONE__CL_0001059_Histone_ChIP_seq_H3K4me3__CenterMask": "H3K4me3",
+    "CHIP_HISTONE__CL_0001059_Histone_ChIP_seq_H3K9me3__CenterMask": "H3K9me3",
+    "DNASE__CL_0001059_DNase_seq__CenterMask": "DNASE",
+    "RNA_SEQ__CL_0001059_polyA_plus_RNA_seq__GeneMaskLFC": "RNA_SEQ",
+    "SPLICE_JUNCTIONS__junction_CL_0001059_polyA_plus_RNA_seq__SpliceJunction": "SPLICE_JUNC",
+    "SPLICE_SITE_USAGE__usage_CL_0001059_polyA_plus_RNA_seq__GeneMaskSplicing": "SPLICE_USAGE",
 }
 
 
@@ -31,22 +46,29 @@ def resolve_artifact(model: str, artifact_path: str | Path | None = None) -> Pat
     if artifact_path:
         return Path(artifact_path)
     key = model.strip().lower().replace("-", "_").replace("+", "_")
-    # normalize aliases
     aliases = {
         "emb": "emb_baseline",
         "emb_base": "emb_baseline",
         "api": "api_baseline",
         "api_base": "api_baseline",
+        "api_rf": "api_only",
+        "interpret": "api_only",
     }
     key = aliases.get(key, key)
     if key not in ARTIFACTS:
-        raise ValueError(f"Unknown model {model!r}; choose emb_baseline or api_baseline")
+        raise ValueError(
+            f"Unknown model {model!r}; choose emb_baseline, api_baseline, or api_only"
+        )
     path = _artifacts_dir() / ARTIFACTS[key]
     if not path.is_file():
         raise FileNotFoundError(
             f"Missing {path}. Run scripts/export_models_from_sm_ch_finetune.py"
         )
     return path
+
+
+def short_api_name(feat: str) -> str:
+    return SHORT_API.get(feat, feat.split("__")[0] if "__" in feat else feat)
 
 
 @dataclass
@@ -56,18 +78,19 @@ class ScoreResult:
     ref: str
     alt: str
     gene: str
-    cadd_phred: float
+    cadd_phred: float | None
     mutation_type: str
-    func_refgene: str
+    func_refgene: str | None
     p_somatic: float
     call_somatic_pm: bool
     pm_threshold: float
     model_name: str
     api_tracks: dict[str, float] = field(default_factory=dict)
+    feature_ranks: list[dict[str, Any]] = field(default_factory=list)
 
 
 class ArchScorer:
-    """Full-fit production scorer (emb+baseline or api+baseline)."""
+    """Production scorers + api_only RF interpretability."""
 
     def __init__(
         self,
@@ -90,6 +113,15 @@ class ArchScorer:
         self.feature_set = str(self.artifact.get("feature_set") or "")
         self.emb_dim = self.artifact.get("emb_dim")
         self.api_feats: list[str] | None = self.artifact.get("api_feats")
+        self._shap_explainer = None
+
+    @property
+    def is_api_only(self) -> bool:
+        return self.model_name.startswith("api_only") or self.feature_set == "api"
+
+    @property
+    def is_emb(self) -> bool:
+        return self.model_name.startswith("emb") or self.feature_set.startswith("emb")
 
     def _baseline_block(
         self, *, gene: str, cadd_phred: float, mutation_type: str, func_refgene: str
@@ -106,6 +138,67 @@ class ArchScorer:
         )
         return np.asarray(self.artifact["base_ct"].transform(base), dtype=np.float64)
 
+    def _api_matrix(
+        self,
+        chrom: str,
+        pos: int,
+        ref: str,
+        alt: str,
+        gene: str,
+        api_tracks: dict[str, float] | None,
+        fetch_api: bool,
+    ) -> tuple[np.ndarray, dict[str, float]]:
+        feats = self.api_feats or []
+        if api_tracks is None:
+            if not fetch_api:
+                raise ValueError("api_tracks required when fetch_api=False")
+            api_tracks = score_api_tracks(
+                chrom, pos, ref, alt, gene, api_key=self.api_key, feature_names=feats
+            )
+        row = pd.DataFrame([{c: float(api_tracks[c]) for c in feats}])
+        z = np.asarray(self.artifact["api_imp"].transform(row), dtype=np.float64)
+        return z, dict(api_tracks)
+
+    def _shap_ranks(self, z_api: np.ndarray) -> list[dict[str, Any]]:
+        """Signed SHAP toward class 1; rank 1 = largest |SHAP|."""
+        try:
+            import shap
+        except ImportError as e:
+            raise ImportError(
+                "shap is required for --explain. Install with: pip install shap"
+            ) from e
+        feats = list(self.api_feats or [])
+        if self._shap_explainer is None:
+            self._shap_explainer = shap.TreeExplainer(self.artifact["clf"])
+        sv = self._shap_explainer.shap_values(z_api)
+        # RF: list [class0, class1] or ndarray (n, n_feat, n_class)
+        if isinstance(sv, list):
+            vals = np.asarray(sv[1], dtype=np.float64).reshape(-1)
+        else:
+            arr = np.asarray(sv, dtype=np.float64)
+            if arr.ndim == 3:
+                vals = arr[0, :, 1]
+            elif arr.ndim == 2:
+                vals = arr[0]
+            else:
+                vals = arr.reshape(-1)
+        if len(vals) != len(feats):
+            raise RuntimeError(
+                f"SHAP length {len(vals)} != n_api_feats {len(feats)}"
+            )
+        order = np.argsort(-np.abs(vals))
+        rows = []
+        for rank, i in enumerate(order, start=1):
+            rows.append(
+                {
+                    "rank": rank,
+                    "feature": feats[i],
+                    "feature_short": short_api_name(feats[i]),
+                    "shap_value": float(vals[i]),
+                }
+            )
+        return rows
+
     def score(
         self,
         chrom: str,
@@ -119,9 +212,37 @@ class ArchScorer:
         cadd_phred: float | None = None,
         func_refgene: str | None = None,
         fetch_api: bool = True,
+        explain: bool = False,
     ) -> ScoreResult:
         g = map_variant_to_gene(chrom, pos, gene=gene)
         mut = to_sbs6(ref, alt)
+        ranks: list[dict[str, Any]] = []
+        tracks_out: dict[str, float] = {}
+
+        if self.is_api_only:
+            z, tracks_out = self._api_matrix(
+                chrom, pos, ref, alt, g, api_tracks, fetch_api
+            )
+            p = float(self.artifact["clf"].predict_proba(z)[0, 1])
+            if explain:
+                ranks = self._shap_ranks(z)
+            return ScoreResult(
+                chrom=str(chrom).replace("chr", ""),
+                pos=int(pos),
+                ref=str(ref).upper(),
+                alt=str(alt).upper(),
+                gene=g,
+                cadd_phred=None,
+                mutation_type=mut,
+                func_refgene=None,
+                p_somatic=p,
+                call_somatic_pm=p >= self.pm_threshold,
+                pm_threshold=self.pm_threshold,
+                model_name=self.model_name,
+                api_tracks=tracks_out,
+                feature_ranks=ranks,
+            )
+
         if cadd_phred is None:
             if not self.fetch_cadd:
                 raise ValueError("cadd_phred required when fetch_cadd=False")
@@ -133,8 +254,7 @@ class ArchScorer:
                 chrom, pos, ref, alt, annovar_dir=self.annovar_dir
             )
 
-        tracks_out: dict[str, float] = {}
-        if self.model_name.startswith("emb") or self.feature_set.startswith("emb"):
+        if self.is_emb:
             if emb_diff is None:
                 raise ValueError(
                     "emb_baseline requires emb_diff (npy) or run extract_fold1_emb_diff.py"
@@ -144,16 +264,9 @@ class ArchScorer:
                 raise ValueError(f"emb_diff dim={emb.shape[1]} != {self.emb_dim}")
             z_front = self.artifact["emb_pca"].transform(emb)
         else:
-            feats = self.api_feats or []
-            if api_tracks is None:
-                if not fetch_api:
-                    raise ValueError("api_tracks required when fetch_api=False")
-                api_tracks = score_api_tracks(
-                    chrom, pos, ref, alt, g, api_key=self.api_key, feature_names=feats
-                )
-            tracks_out = dict(api_tracks)
-            row = pd.DataFrame([{c: float(api_tracks[c]) for c in feats}])
-            z_front = np.asarray(self.artifact["api_imp"].transform(row), dtype=np.float64)
+            z_front, tracks_out = self._api_matrix(
+                chrom, pos, ref, alt, g, api_tracks, fetch_api
+            )
 
         z_base = self._baseline_block(
             gene=g,
@@ -177,4 +290,5 @@ class ArchScorer:
             pm_threshold=self.pm_threshold,
             model_name=self.model_name,
             api_tracks=tracks_out,
+            feature_ranks=ranks,
         )

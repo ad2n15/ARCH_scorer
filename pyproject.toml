@@ -22,6 +22,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=7.0"]
+explain = ["shap>=0.44"]
 
 [project.scripts]
 arch-score = "arch_scorer.cli:main"
