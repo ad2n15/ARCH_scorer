@@ -16,6 +16,23 @@ Artifacts are fit on **all** ARCH21 NC alleles; the binary threshold is the publ
 
 The hosted AlphaGenome API does **not** return trunk embeddings. For `emb_baseline`, use a precomputed `--emb` file **or** extract locally with **pretrained fold_1** (not a fine-tuned model).
 
+### Fine-tuned AG head (weights only)
+
+Heads-only FT checkpoint on ARCH21 NC (~617 KB Orbax dir) is shipped for reuse with **frozen fold_1**:
+
+| Artifact | Path | Held-out test |
+|----------|------|---------------|
+| AG NC heads-only | `artifacts/ag_finetuned_arch21_nc_heads_only/` | AUROC **0.761**, PM Sens **0.233**, Spec **0.979** |
+
+Meta: `artifacts/ag_finetuned_arch21_nc_heads_only.meta.json`. Load via `sm_ch_finetune` `load_variant_checkpoint` (base = fold_1 from Kaggle; head = this dir). **Not** wired into `arch-score` yet (separate from the sklearn models above). CNC head will be added when training finishes.
+
+Maintainers — refresh from `sm_ch_finetune` checkpoints:
+
+```bash
+./run_binemo_AMD.sh ARCH_scorer/scripts/export_ag_finetuned_head.py          # NC
+./run_binemo_AMD.sh ARCH_scorer/scripts/export_ag_finetuned_head.py --cohort cnc
+```
+
 ## Install
 
 ```bash
@@ -104,6 +121,9 @@ Maintainers — rebuild full-fit joblibs from `sm_ch_finetune`:
 # → artifacts/emb_baseline_xgb_gene_onehot.joblib
 # → artifacts/api_baseline_xgb_gene_onehot.joblib
 # → artifacts/api_only_rf.joblib
+
+./run_binemo_AMD.sh ARCH_scorer/scripts/export_ag_finetuned_head.py
+# → artifacts/ag_finetuned_arch21_nc_heads_only/
 ```
 
 ## Usage
@@ -153,7 +173,8 @@ Skip live CADD/ANNOVAR on production models with `--cadd-phred` / `--func`.
 - hg38 SNVs
 - Hosted AG API: track scores only (`api_baseline` / `api_only`)
 - Embeddings: pretrained **fold_1** local extract (or user-supplied `--emb`)
+- Fine-tuned AG head weights: `artifacts/ag_finetuned_arch21_nc_heads_only/` (fold_1 backbone still required; AlphaGenome model terms apply)
 
 ## License
 
-Apache-2.0. AlphaGenome / ANNOVAR / CADD have separate terms.
+Apache-2.0. AlphaGenome / ANNOVAR / CADD have separate terms. Fine-tuned AG heads are derived from fold_1 and remain subject to [AlphaGenome model terms](https://www.kaggle.com/models/google/alphagenome).

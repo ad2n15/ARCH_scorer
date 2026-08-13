@@ -1,0 +1,34 @@
+{
+  "name": "ag_finetuned_arch21_nc_heads_only",
+  "description": "AlphaGenome fold_1 heads-only fine-tune (sm_ch_classifier) on ARCH21 MANE noncoding gnomAD-style splits.",
+  "backbone": "fold_1 (frozen; download via scripts/install_fold1.py — not included)",
+  "finetune_strategy": "heads_only",
+  "head": "sm_ch_classifier",
+  "head_config": {
+    "hidden_dim": 256,
+    "pooling": "variant",
+    "num_tracks": 1
+  },
+  "cohort": "ARCH21 MANE noncoding",
+  "pilot_dir": "sm_ch_finetune/data/pilot_arch21_mane_noncoding_gvs_finetune",
+  "splits": {"train": 57234, "valid": 7155, "test": 7155},
+  "config": "sm_ch_finetune/config/arch21_mane_noncoding_gvs_nocds_64kb_bs8_5ep.yaml",
+  "window_bp": 65536,
+  "batch_size": 8,
+  "num_epochs": 5,
+  "checkpoint_dir": "artifacts/ag_finetuned_arch21_nc_heads_only",
+  "format": "orbax (config.json + checkpoint/)",
+  "size_approx": "~617 KB",
+  "held_out_test": {
+    "n": 7155,
+    "n_somatic": 189,
+    "auroc": 0.761,
+    "auprc": 0.167,
+    "pm_sensitivity": 0.233,
+    "pm_specificity": 0.979,
+    "pm_threshold": 0.10818895456207037,
+    "valid_youden_threshold": 0.035678550877730524
+  },
+  "load_with": "sm_ch_finetune eval.checkpoint_loader.load_variant_checkpoint (base=fold_1, head=this dir)",
+  "note": "Not used by arch-score emb_baseline/api_* paths. Those are separate sklearn artifacts. CNC head will be added when training finishes."
+}
