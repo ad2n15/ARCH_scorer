@@ -104,7 +104,7 @@ CADD and functional class are fetched live, or you can pass them with `--cadd-ph
 
 ## Data
 
-The variant-level tables derived from public sources are on Zenodo (`python scripts/fetch_data.py`; see [`data/README.md`](data/README.md)). They cover:
+The variant-level tables derived from public sources are on Zenodo, [doi:10.5281/zenodo.24008687](https://doi.org/10.5281/zenodo.24008687) (`python scripts/fetch_data.py`; see [`data/README.md`](data/README.md)). They cover:
 - the genome-wide cohort;
 - the 21-gene cohort, without the somatic variants supported only by COSMIC, which is licensed.
 

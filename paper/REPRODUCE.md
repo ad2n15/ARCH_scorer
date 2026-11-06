@@ -59,7 +59,7 @@ Download these into the project root, where the scripts expect them:
 | AlphaGenome API key; fold_1 weights (Kaggle) | 05, 101, AlphaGenome fine-tuning | free, terms apply |
 | NTv3 650M post-trained; Borzoi human_rep0 | NTv3 and Borzoi fine-tuning | Hugging Face |
 
-If you are not using COSMIC, `data/release/arch21_*_public.csv.gz` (from `scripts/fetch_data.py`) contains every germline variant and every somatic variant with a public source. With these tables the analyses run on a subset (1,088 of 1,914 non-coding somatic variants), so the results will differ from the paper.
+If you are not using COSMIC, `data/release/arch21_*_public.csv.gz` (Zenodo doi:10.5281/zenodo.24008687; `python scripts/fetch_data.py`) contains every germline variant and every somatic variant with a public source. With these tables the analyses run on a subset (1,088 of 1,914 non-coding somatic variants), so the results will differ from the paper.
 
 ### Order of steps (21 ARCH genes)
 

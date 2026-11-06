@@ -1,7 +1,7 @@
 # Data
 
 - **`arch21_mane_noncoding_intervals.json`:** MANE Select non-coding windows of the 21 ARCH genes, used by the AlphaGenome sklearn models.
-- **`release/`:** variant-level tables, downloaded with `python scripts/fetch_data.py` (Zenodo). These are not in git.
+- **`release/`:** variant-level tables, downloaded with `python scripts/fetch_data.py` from Zenodo, [doi:10.5281/zenodo.24008687](https://doi.org/10.5281/zenodo.24008687). These are not in git.
 
   | File | Rows | Content |
   |---|---|---|

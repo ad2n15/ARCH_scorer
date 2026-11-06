@@ -227,3 +227,5 @@ reference/
 *.npy
 # Zenodo upload, built by scripts/export_public_data.py
 release_data/
+# downloaded from Zenodo by scripts/fetch_data.py
+data/release/
