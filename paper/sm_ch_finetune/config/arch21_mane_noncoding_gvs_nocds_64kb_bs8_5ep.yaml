@@ -1,0 +1,40 @@
+# ARCH21 MANE noncoding germline vs somatic — heads-only AG fold_1, 64 kb, ALT.
+# Build pilots first:
+#   ./run_binemo_AMD.sh sm_ch_finetune/scripts/115_build_arch21_gvs_finetune_pilots.py \
+#       --region noncoding --train-frac 0.80 --valid-frac 0.10 --test-frac 0.10
+project_dir: .
+
+data:
+  raw_csv: ../40246_2025_847_MOESM2_ESM.csv
+  processed_dir: data/processed
+  age_filtered_dir: data/processed_age_filtered
+  cds_filtered_dir: data/processed_cds
+  gtf_path: data/reference/gencode.v46.annotation.gtf
+  use_cds_filter: false
+  use_cds_mask: false
+  use_age_filter: false
+  fasta_path: data/reference/hg38.fa
+  pilot_dir: data/pilot_arch21_mane_noncoding_gvs_finetune
+  seed: 42
+
+model:
+  organism: HOMO_SAPIENS
+  model_version: fold_1
+  checkpoint_path: null
+  window_size: 65536
+  finetune_strategy: heads_only
+  pooling: variant
+  head_id: sm_ch_classifier
+
+training:
+  batch_size: 8
+  num_epochs: 5
+  learning_rate: 0.0008
+  weight_decay: 0.01
+  early_stopping_patience: 3
+  max_train_steps: null
+
+checkpoint_dir: checkpoints/arch21_mane_noncoding_gvs_nocds_64kb_bs8_5ep
+results_dir: results
+metrics_file: finetune_metrics_arch21_mane_noncoding_gvs.json
+export_prefix: arch21_nc_gvs

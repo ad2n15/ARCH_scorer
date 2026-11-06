@@ -1,0 +1,70 @@
+{
+  "n_test": 18620,
+  "n_ch": 4254,
+  "covariate_classifier": "lr",
+  "spearman": {
+    "covariates__alphagenome": 0.2765325494874601,
+    "covariates__ntv3": 0.4354977688170478,
+    "covariates__borzoi": 0.18372430045336496,
+    "alphagenome__ntv3": 0.8371723544606325,
+    "alphagenome__borzoi": 0.7796589490104485,
+    "ntv3__borzoi": 0.7809478339667889
+  },
+  "jaccard_prev_matched": {
+    "covariates__alphagenome": 0.174975832067394,
+    "covariates__ntv3": 0.19847865896605155,
+    "covariates__borzoi": 0.16803953871499178,
+    "alphagenome__ntv3": 0.5905776780706674,
+    "alphagenome__borzoi": 0.5553930530164534,
+    "ntv3__borzoi": 0.575847379144286
+  },
+  "shared_positive_calls": {
+    "covariates__alphagenome": {
+      "n_shared": 1267,
+      "k": 4254,
+      "frac_of_k": 0.29783732957216735
+    },
+    "covariates__ntv3": {
+      "n_shared": 1409,
+      "k": 4254,
+      "frac_of_k": 0.3312176774800188
+    },
+    "covariates__borzoi": {
+      "n_shared": 1224,
+      "k": 4254,
+      "frac_of_k": 0.28772919605077574
+    },
+    "alphagenome__ntv3": {
+      "n_shared": 3159,
+      "k": 4254,
+      "frac_of_k": 0.7425952045133991
+    },
+    "alphagenome__borzoi": {
+      "n_shared": 3038,
+      "k": 4254,
+      "frac_of_k": 0.7141513869299483
+    },
+    "ntv3__borzoi": {
+      "n_shared": 3109,
+      "k": 4254,
+      "frac_of_k": 0.730841560883874
+    }
+  },
+  "cohen_kappa_prev_matched": {
+    "covariates__alphagenome": 0.08991584829693398,
+    "covariates__ntv3": 0.1331806455991889,
+    "covariates__borzoi": 0.07681453643780053,
+    "alphagenome__ntv3": 0.6663735700988089,
+    "alphagenome__borzoi": 0.6295070878905495,
+    "ntv3__borzoi": 0.6511394865416772
+  },
+  "all4_positive": 863,
+  "any1_positive_union": 8543,
+  "true_ch_by_n_models_calling": {
+    "0": 1957,
+    "1": 979,
+    "2": 421,
+    "3": 621,
+    "4": 276
+  }
+}

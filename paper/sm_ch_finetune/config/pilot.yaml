@@ -1,0 +1,49 @@
+project_dir: .
+
+data:
+  raw_csv: ../40246_2025_847_MOESM2_ESM.csv
+  processed_dir: data/processed
+  age_filtered_dir: data/processed_age_filtered
+  cds_filtered_dir: data/processed_cds
+  gtf_path: data/reference/gencode.v46.annotation.gtf
+  use_cds_filter: true
+  use_age_filter: true
+  fasta_path: data/reference/hg38.fa
+  n_sm: 25000
+  n_ch: 25000
+  seed: 42
+  # Age-filtered cohort split (01e_build_age_filtered_splits.py)
+  split_method: random   # random | chromosome
+  train_frac: 0.9
+  valid_frac: 0.05
+  test_frac: 0.05
+  # Legacy chromosome holdout (only if split_method: chromosome)
+  train_chroms: ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"]
+  valid_chroms: ["17","18","19"]
+  test_chroms: ["20","21","22","X"]
+
+gnomad:
+  vcf_path: ../gnomad/gnomad.exomes.r2.1.1.sites.liftover_grch38.vcf.bgz
+  age_index_cache: data/cache/gnomad_age_index.pkl
+
+model:
+  organism: HOMO_SAPIENS
+  model_version: fold_1
+  # null = auto-use alphagenome/.cache/kagglehub/... (required for offline SLURM nodes)
+  checkpoint_path: null
+  window_size: 32768
+  heads_only: true
+  head_id: sm_ch_classifier
+
+training:
+  batch_size: 1
+  num_epochs: 15
+  learning_rate: 0.0003
+  weight_decay: 0.01
+  early_stopping_patience: 5
+  max_train_steps: 500
+
+checkpoint_dir: checkpoints/pilot_cds
+results_dir: results
+
+# Fine-tuning only (config/pilot.yaml). Track scoring uses config/track_scoring.yaml + API.

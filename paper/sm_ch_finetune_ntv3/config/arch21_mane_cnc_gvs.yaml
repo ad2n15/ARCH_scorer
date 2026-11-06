@@ -1,0 +1,36 @@
+# ARCH21 MANE CNC (coding∪noncoding) GVS — NTv3 heads-only (same splits as AG CNC).
+project_dir: .
+
+data:
+  fasta_path: ../sm_ch_finetune/data/reference/hg38.fa
+  pilot_dir: ../sm_ch_finetune/data/pilot_arch21_mane_cnc_gvs_finetune
+  seed: 42
+
+model:
+  hf_model: InstaDeepAI/NTv3_650M_post
+  species: human
+  window_size: 65536
+  head_hidden_dim: 256
+
+training:
+  batch_size: 8
+  grad_accum_steps: 1
+  eval_batch_size: 8
+  num_epochs: 5
+  learning_rate: 0.0008
+  weight_decay: 0.01
+  early_stopping_patience: 3
+  log_every_steps: 50
+  max_train_steps: null
+
+checkpoint_dir: checkpoints/arch21_mane_cnc_gvs_64kb_bs8_5ep
+results_dir: results
+
+export:
+  prefix: ntv3_arch21_cnc_gvs
+  include_valid: true
+  train_predictions: results/ntv3_arch21_cnc_gvs_train_predictions.parquet
+  valid_predictions: results/ntv3_arch21_cnc_gvs_valid_predictions.parquet
+  test_predictions: results/ntv3_arch21_cnc_gvs_test_predictions.parquet
+
+metrics_file: results/ntv3_arch21_cnc_gvs_test_metrics.json

@@ -4,12 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "arch-scorer"
-version = "0.1.0"
-description = "ARCH21 noncoding somatic vs germline scorer (AlphaGenome companion)"
+version = "1.0.0"
+description = "Score variants for ARCH: somatic vs germline in 21 ARCH genes and ARCH vs other somatic genome-wide (AlphaGenome, NTv3, Borzoi)"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }
-authors = [{ name = "Ahmed" }]
+authors = [{ name = "Ahmed Dawoud" }]
 dependencies = [
   "numpy>=1.24",
   "pandas>=2.0",
@@ -23,6 +23,16 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest>=7.0"]
 explain = ["shap>=0.44"]
+finetuned = [
+  "torch>=2.3",
+  "safetensors>=0.4",
+  "huggingface_hub>=0.34,<1.0",
+  "pyfaidx>=0.7",
+]
+ntv3 = ["arch-scorer[finetuned]", "transformers==4.56.2"]
+borzoi = ["arch-scorer[finetuned]", "gReLU>=1.0"]
+alphagenome = ["arch-scorer[finetuned,emb]"]
+paper = ["statsmodels>=0.14", "shap>=0.44", "matplotlib>=3.8", "openpyxl>=3.1", "pymupdf>=1.24", "pillow>=10"]
 emb = [
   "kagglehub>=0.3",
   "pyfaidx>=0.7",
@@ -32,6 +42,7 @@ emb = [
 
 [project.scripts]
 arch-score = "arch_scorer.cli:main"
+arch-score-ft = "arch_scorer.finetuned.predict:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

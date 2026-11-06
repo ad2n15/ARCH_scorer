@@ -1,0 +1,44 @@
+# AlphaGenome API CD34+ scoring for ARCH MANE noncoding pooled-SM cohort
+# germline: ab_n>=5 + prior filters
+# somatic: AS_pab ∪ paper MW (n>2) ∪ COSMIC NCV all-MANE
+project_dir: .
+
+data:
+  age_filtered_dir: data/processed_age_filtered
+  gtf_path: data/reference/gencode.v46.annotation.gtf
+  fasta_path: data/reference/hg38.fa
+  pilot_dir: data/pilot_arch_mane_noncoding_pooled_sm
+  use_cds_filter: false
+  use_age_filter: true
+  seed: 42
+
+api:
+  key_env: ALPHA_GENOME_API_KEY
+  model_version: null
+  organism: HOMO_SAPIENS
+  sequence_length: 1048576
+
+scoring:
+  ontology_terms:
+    - CL:0001059
+  scorers:
+    - RNA_SEQ
+    - DNASE
+    - ATAC
+    - CHIP_HISTONE
+    - CHIP_TF
+    - CAGE
+    - PROCAP
+    - SPLICE_SITES
+    - SPLICE_SITE_USAGE
+    - SPLICE_JUNCTIONS
+  include_polyadenylation: false
+  match_gene_strand: true
+  raw_only: true
+  track_model: rf
+  splits: ["test"]
+  max_variants: null
+  resume: true
+
+results_dir: results
+scores_dir: results/track_scores_arch_mane_noncoding_pooled_sm

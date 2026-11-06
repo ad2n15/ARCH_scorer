@@ -216,3 +216,14 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# ARCH_scorer release
+# held-out variant IDs with labels (COSMIC-derived): never commit
+checks/
+paper/figures/output/
+annovar*.tar.gz
+annovar_install/
+reference/
+*.npy
+# Zenodo upload, built by scripts/export_public_data.py
+release_data/

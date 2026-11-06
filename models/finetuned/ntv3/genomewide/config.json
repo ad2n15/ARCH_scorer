@@ -1,0 +1,14 @@
+{
+  "backbone": "InstaDeepAI/NTv3_650M_post",
+  "backbone_revision": "ad622051abbe9376bdea3f2727863fa559957e9f",
+  "genome": "GRCh38",
+  "window_size": 65536,
+  "variant_index": 32768,
+  "pooling": "final hidden state at the ALT base",
+  "layer_norm": true,
+  "embed_dim": 1536,
+  "hidden_dim": 256,
+  "task": "ARCH vs other somatic, genome-wide (Colin-Leitzinger age-filtered cohort)",
+  "positive_class": "ARCH",
+  "negative_class": "other somatic"
+}

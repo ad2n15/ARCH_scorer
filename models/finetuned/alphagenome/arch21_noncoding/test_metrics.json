@@ -1,0 +1,8 @@
+{
+  "n": 7155,
+  "n_pos": 189,
+  "auroc_finetuned": 0.7612,
+  "auroc_fused": 0.7888,
+  "auprc_finetuned": 0.1669,
+  "auprc_fused": 0.2377
+}

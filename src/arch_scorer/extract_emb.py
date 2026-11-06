@@ -165,7 +165,7 @@ def extract_fold1_diff(
         fa = pyfaidx.Fasta(str(fasta_path))
     if model is None or embedder is None or org_idx is None:
         model, org_idx, _device = load_fold1(fasta_path, checkpoint=checkpoint)
-        embedder = VariantSiteEmbedder(model.params, model.state)
+        embedder = VariantSiteEmbedder(model._params, model._state)
 
     tok_ref, center = fetch_window(
         fa, chrom, int(pos), str(ref).upper(), window_size=window_size
@@ -200,7 +200,7 @@ def extract_fold1_diff_batch(
     fasta_path = find_fasta(fasta)
     fa = pyfaidx.Fasta(str(fasta_path))
     model, org_idx, _ = load_fold1(fasta_path, checkpoint=checkpoint)
-    embedder = VariantSiteEmbedder(model.params, model.state)
+    embedder = VariantSiteEmbedder(model._params, model._state)
     out: list[np.ndarray] = []
     for r in rows:
         out.append(

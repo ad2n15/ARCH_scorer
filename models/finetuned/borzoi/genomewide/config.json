@@ -1,0 +1,13 @@
+{
+  "backbone": "Genentech/borzoi-model human_rep0 (gReLU), crop disabled",
+  "genome": "GRCh38",
+  "window_size": 65536,
+  "variant_index": 32768,
+  "pooling": "32 bp trunk bin containing the ALT base",
+  "layer_norm": false,
+  "embed_dim": 1920,
+  "hidden_dim": 256,
+  "task": "ARCH vs other somatic, genome-wide (Colin-Leitzinger age-filtered cohort)",
+  "positive_class": "ARCH",
+  "negative_class": "other somatic"
+}

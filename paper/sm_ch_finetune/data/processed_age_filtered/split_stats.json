@@ -1,0 +1,31 @@
+{
+  "source": "data/processed_age_filtered/sm_ch_age_filtered.parquet",
+  "input_rows": 396556,
+  "snv_parsed": 372396,
+  "splits": {
+    "train": {
+      "n": 335156,
+      "n_sm": 258586,
+      "n_ch": 76570,
+      "ch_rate": 0.22846077647423887
+    },
+    "valid": {
+      "n": 18620,
+      "n_sm": 14366,
+      "n_ch": 4254,
+      "ch_rate": 0.2284640171858217
+    },
+    "test": {
+      "n": 18620,
+      "n_sm": 14366,
+      "n_ch": 4254,
+      "ch_rate": 0.2284640171858217
+    }
+  },
+  "method": "random",
+  "seed": 42,
+  "train_frac": 0.9,
+  "valid_frac": 0.05,
+  "test_frac": 0.05,
+  "stratify_col": "label"
+}

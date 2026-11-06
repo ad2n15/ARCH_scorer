@@ -1,0 +1,34 @@
+# Stratified + covariates eval for NTv3 full-cohort predictions.
+project_dir: .
+
+data:
+  age_filtered_dir: data/processed_age_filtered
+  use_cds_filter: false
+  use_age_filter: true
+  seed: 42
+
+finetune:
+  train_predictions: ../sm_ch_finetune_ntv3/results/ntv3_full_train_predictions.parquet
+  test_predictions: ../sm_ch_finetune_ntv3/results/ntv3_full_test_predictions.parquet
+
+ensemble:
+  include_cadd: true
+  cadd_col: cadd
+  include_exonic_func: true
+  exonic_func_col: exonic_func
+  include_gene: true
+  gene_col: gene
+  gene_top_k: 100
+  include_mutation_type: true
+  mutation_type_col: mutation_type
+  lr_C: 0.5
+  lr_max_iter: 2000
+  stratify_cols: [mchip, lchip]
+  stratify_func: true
+  func_col: func
+  stratify_exonic_func: true
+  stratify_genes: [DNMT3A, TET2, ASXL1]
+  min_stratum_n: 30
+  stratify_model: finetune_center_only
+
+results_file: results/ntv3_full_finetune_covariates.json

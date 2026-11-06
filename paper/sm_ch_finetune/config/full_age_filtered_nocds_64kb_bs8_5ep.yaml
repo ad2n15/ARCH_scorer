@@ -1,0 +1,43 @@
+# Full age-filtered cohort, random 90/5/5 split (01e_build_age_filtered_splits.py).
+# train=335156 | valid=18620 | test=18620 | CH rate ~23%
+# heads-only, 64 kb, bs8, 5 epochs + early stopping (patience 3).
+# ~41900 steps/epoch, ~210K steps max — expect many hours on L40.
+project_dir: .
+
+data:
+  raw_csv: ../40246_2025_847_MOESM2_ESM.csv
+  processed_dir: data/processed
+  age_filtered_dir: data/processed_age_filtered
+  cds_filtered_dir: data/processed_cds
+  gtf_path: data/reference/gencode.v46.annotation.gtf
+  use_cds_filter: false
+  use_cds_mask: false
+  use_age_filter: true
+  fasta_path: data/reference/hg38.fa
+  seed: 42
+  split_method: random
+  train_frac: 0.9
+  valid_frac: 0.05
+  test_frac: 0.05
+
+model:
+  organism: HOMO_SAPIENS
+  model_version: fold_1
+  checkpoint_path: null
+  window_size: 65536
+  finetune_strategy: heads_only
+  head_id: sm_ch_classifier
+
+training:
+  batch_size: 8
+  num_epochs: 5
+  learning_rate: 0.0008
+  weight_decay: 0.01
+  early_stopping_patience: 3
+  max_train_steps: null
+
+checkpoint_dir: checkpoints/full_age_filtered_nocds_64kb_bs8_5ep
+results_dir: results
+metrics_file: finetune_metrics_full_age_filtered_64kb_bs8_5ep.json
+# Distinct from pilots (finetune_5k_* / finetune_chip_*). Never use unprefixed names.
+export_prefix: full

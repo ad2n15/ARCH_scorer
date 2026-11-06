@@ -1,0 +1,13 @@
+{
+  "backbone": "AlphaGenome fold_1 (JAX, Kaggle google/alphagenome)",
+  "genome": "GRCh38",
+  "window_size": 65536,
+  "variant_index": 32768,
+  "pooling": "1 bp sequence embedding at the ALT base (bfloat16 compute)",
+  "layer_norm": false,
+  "embed_dim": 1536,
+  "hidden_dim": 256,
+  "task": "ARCH vs other somatic, genome-wide (Colin-Leitzinger age-filtered cohort)",
+  "positive_class": "ARCH",
+  "negative_class": "other somatic"
+}

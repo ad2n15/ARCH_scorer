@@ -1,0 +1,1469 @@
+{
+  "data_dir": "data/processed_age_filtered",
+  "train_predictions": "results/finetune_full_train_predictions.parquet",
+  "test_predictions": "results/finetune_full_test_predictions.parquet",
+  "n_train": 335156,
+  "n_test": 18620,
+  "ch_rate_test": 0.2284640171858217,
+  "ensemble_type": "meta_lr_on_finetune_prob_and_covariates",
+  "include_cadd": true,
+  "include_exonic_func": true,
+  "include_gene": true,
+  "include_mutation_type": true,
+  "cadd_col": "cadd",
+  "n_exonic_func_features": 6,
+  "gene_top_k": 100,
+  "n_gene_features": 101,
+  "n_mutation_type_features": 12,
+  "metrics": [
+    {
+      "model": "finetune_center_only",
+      "n_features": 1,
+      "auroc": 0.5689072370962077,
+      "auprc": 0.26690849994703925,
+      "n": 18620
+    },
+    {
+      "model": "covariates_only",
+      "n_features": 120,
+      "fusion": "late",
+      "auroc": 0.5623231349080041,
+      "auprc": 0.26152143067915135,
+      "n": 18620
+    },
+    {
+      "model": "ensemble_finetune_plus_cadd_plus_exonic_plus_gene_plus_mutation",
+      "n_features": 121,
+      "fusion": "late",
+      "auroc": 0.5841455505250899,
+      "auprc": 0.2759829688252203,
+      "n": 18620
+    }
+  ],
+  "prevalence_matched": {
+    "finetune_center_only": {
+      "threshold": 0.25534365985620666,
+      "tn": 11234,
+      "fp": 3132,
+      "fn": 3029,
+      "tp": 1225,
+      "n": 18620,
+      "n_pred_ch": 4357,
+      "n_true_ch": 4254,
+      "sensitivity": 0.28796426892336624,
+      "specificity": 0.781985242934707,
+      "f1": 0.2845198002554872,
+      "balanced_accuracy": 0.5349747559290365,
+      "method": "prevalence_matched_top_k",
+      "k": 4254
+    },
+    "covariates_only": {
+      "threshold": 0.24906993825765764,
+      "tn": 10188,
+      "fp": 4178,
+      "fn": 2757,
+      "tp": 1497,
+      "n": 18620,
+      "n_pred_ch": 5675,
+      "n_true_ch": 4254,
+      "sensitivity": 0.3519040902679831,
+      "specificity": 0.7091744396491717,
+      "f1": 0.30154094067881965,
+      "balanced_accuracy": 0.5305392649585774,
+      "method": "prevalence_matched_top_k",
+      "k": 4254
+    },
+    "ensemble_finetune_plus_cadd_plus_exonic_plus_gene_plus_mutation": {
+      "threshold": 0.2618543000520773,
+      "tn": 11344,
+      "fp": 3022,
+      "fn": 3019,
+      "tp": 1235,
+      "n": 18620,
+      "n_pred_ch": 4257,
+      "n_true_ch": 4254,
+      "sensitivity": 0.29031499764927127,
+      "specificity": 0.789642210775442,
+      "f1": 0.29021266596169665,
+      "balanced_accuracy": 0.5399786042123567,
+      "method": "prevalence_matched_top_k",
+      "k": 4254
+    }
+  },
+  "by_stratum": {
+    "mchip": {
+      "model": "finetune_center_only",
+      "stratify_col": "mchip",
+      "min_stratum_n": 30,
+      "rows": [
+        {
+          "mchip": "No",
+          "n": 18618,
+          "n_ch": 4252,
+          "n_sm": 14366,
+          "ch_rate": 0.22838113653453648,
+          "skipped": false,
+          "auroc": 0.5689882210518749,
+          "auprc": 0.26688245643457253
+        },
+        {
+          "mchip": "Yes",
+          "n": 2,
+          "skipped": true,
+          "reason": "n < 30"
+        }
+      ],
+      "prevalence_matched": {
+        "No": {
+          "threshold": 0.25534365985620666,
+          "tn": 11234,
+          "fp": 3132,
+          "fn": 3027,
+          "tp": 1225,
+          "n": 18618,
+          "n_pred_ch": 4357,
+          "n_true_ch": 4252,
+          "sensitivity": 0.2880997177798683,
+          "specificity": 0.781985242934707,
+          "f1": 0.28458589847833665,
+          "balanced_accuracy": 0.5350424803572876,
+          "method": "prevalence_matched_top_k",
+          "k": 4252
+        }
+      }
+    },
+    "lchip": {
+      "model": "finetune_center_only",
+      "stratify_col": "lchip",
+      "min_stratum_n": 30,
+      "rows": [
+        {
+          "lchip": "No",
+          "n": 18619,
+          "n_ch": 4254,
+          "n_sm": 14365,
+          "ch_rate": 0.2284762876631398,
+          "skipped": false,
+          "auroc": 0.568925534510547,
+          "auprc": 0.2669276874694446
+        },
+        {
+          "lchip": "Yes",
+          "n": 1,
+          "skipped": true,
+          "reason": "n < 30"
+        }
+      ],
+      "prevalence_matched": {
+        "No": {
+          "threshold": 0.25534365985620666,
+          "tn": 11233,
+          "fp": 3132,
+          "fn": 3029,
+          "tp": 1225,
+          "n": 18619,
+          "n_pred_ch": 4357,
+          "n_true_ch": 4254,
+          "sensitivity": 0.28796426892336624,
+          "specificity": 0.781970066132962,
+          "f1": 0.2845198002554872,
+          "balanced_accuracy": 0.5349671675281642,
+          "method": "prevalence_matched_top_k",
+          "k": 4254
+        }
+      }
+    },
+    "stratify_genes": {
+      "model": "finetune_center_only",
+      "stratify_col": "gene",
+      "min_stratum_n": 30,
+      "rows": [
+        {
+          "gene": "DNMT3A",
+          "n": 4,
+          "skipped": true,
+          "reason": "n < 30"
+        },
+        {
+          "gene": "TET2",
+          "n": 0,
+          "skipped": true,
+          "reason": "n < 30"
+        },
+        {
+          "gene": "ASXL1",
+          "n": 0,
+          "skipped": true,
+          "reason": "n < 30"
+        }
+      ],
+      "prevalence_matched": {},
+      "genes": [
+        "DNMT3A",
+        "TET2",
+        "ASXL1"
+      ]
+    }
+  },
+  "stratify_model": "finetune_center_only",
+  "by_func": {
+    "finetune_center_only": {
+      "model": "finetune_center_only",
+      "stratify_col": "func",
+      "min_stratum_n": 30,
+      "rows": [
+        {
+          "func": "splicing",
+          "n": 111,
+          "n_ch": 31,
+          "n_sm": 80,
+          "ch_rate": 0.27927927927927926,
+          "skipped": false,
+          "auroc": 0.7483870967741936,
+          "auprc": 0.5603463993312403
+        },
+        {
+          "func": "ncRNA_intronic",
+          "n": 144,
+          "n_ch": 36,
+          "n_sm": 108,
+          "ch_rate": 0.25,
+          "skipped": false,
+          "auroc": 0.5965792181069959,
+          "auprc": 0.3293330895875182
+        },
+        {
+          "func": "exonic",
+          "n": 12423,
+          "n_ch": 2756,
+          "n_sm": 9667,
+          "ch_rate": 0.2218465749013926,
+          "skipped": false,
+          "auroc": 0.5787859262047368,
+          "auprc": 0.2662842832418384
+        },
+        {
+          "func": "upstream",
+          "n": 73,
+          "n_ch": 16,
+          "n_sm": 57,
+          "ch_rate": 0.2191780821917808,
+          "skipped": false,
+          "auroc": 0.5762061403508771,
+          "auprc": 0.38756354965573087
+        },
+        {
+          "func": "ncRNA_exonic",
+          "n": 123,
+          "n_ch": 32,
+          "n_sm": 91,
+          "ch_rate": 0.2601626016260163,
+          "skipped": false,
+          "auroc": 0.5599244505494505,
+          "auprc": 0.3140530642565889
+        },
+        {
+          "func": "intronic",
+          "n": 4576,
+          "n_ch": 1090,
+          "n_sm": 3486,
+          "ch_rate": 0.2381993006993007,
+          "skipped": false,
+          "auroc": 0.5441227557674999,
+          "auprc": 0.261972641778113
+        },
+        {
+          "func": "UTR5",
+          "n": 683,
+          "n_ch": 179,
+          "n_sm": 504,
+          "ch_rate": 0.26207906295754024,
+          "skipped": false,
+          "auroc": 0.5412565398598919,
+          "auprc": 0.2858965876754659
+        },
+        {
+          "func": "UTR3",
+          "n": 415,
+          "n_ch": 99,
+          "n_sm": 316,
+          "ch_rate": 0.2385542168674699,
+          "skipped": false,
+          "auroc": 0.46846630865618205,
+          "auprc": 0.22423004390519186
+        },
+        {
+          "func": "intergenic",
+          "n": 53,
+          "n_ch": 9,
+          "n_sm": 44,
+          "ch_rate": 0.16981132075471697,
+          "skipped": false,
+          "auroc": 0.3939393939393939,
+          "auprc": 0.14934956396812787
+        },
+        {
+          "func": "UTR5;UTR3",
+          "n": 3,
+          "skipped": true,
+          "reason": "n < 30"
+        },
+        {
+          "func": "downstream",
+          "n": 9,
+          "skipped": true,
+          "reason": "n < 30"
+        },
+        {
+          "func": "exonic;splicing",
+          "n": 2,
+          "skipped": true,
+          "reason": "n < 30"
+        },
+        {
+          "func": "ncRNA_exonic;splicing",
+          "n": 1,
+          "skipped": true,
+          "reason": "n < 30"
+        },
+        {
+          "func": "upstream;downstream",
+          "n": 4,
+          "skipped": true,
+          "reason": "n < 30"
+        }
+      ],
+      "prevalence_matched": {
+        "splicing": {
+          "threshold": 0.23231014609688014,
+          "tn": 65,
+          "fp": 15,
+          "fn": 15,
+          "tp": 16,
+          "n": 111,
+          "n_pred_ch": 31,
+          "n_true_ch": 31,
+          "sensitivity": 0.5161290322580645,
+          "specificity": 0.8125,
+          "f1": 0.5161290322580645,
+          "balanced_accuracy": 0.6643145161290323,
+          "method": "prevalence_matched_top_k",
+          "k": 31
+        },
+        "ncRNA_intronic": {
+          "threshold": 0.25683199138751883,
+          "tn": 82,
+          "fp": 26,
+          "fn": 24,
+          "tp": 12,
+          "n": 144,
+          "n_pred_ch": 38,
+          "n_true_ch": 36,
+          "sensitivity": 0.3333333333333333,
+          "specificity": 0.7592592592592593,
+          "f1": 0.32432432432432434,
+          "balanced_accuracy": 0.5462962962962963,
+          "method": "prevalence_matched_top_k",
+          "k": 36
+        },
+        "exonic": {
+          "threshold": 0.25534365985620666,
+          "tn": 7695,
+          "fp": 1972,
+          "fn": 1961,
+          "tp": 795,
+          "n": 12423,
+          "n_pred_ch": 2767,
+          "n_true_ch": 2756,
+          "sensitivity": 0.28846153846153844,
+          "specificity": 0.7960070342401986,
+          "f1": 0.28788701792504073,
+          "balanced_accuracy": 0.5422342863508685,
+          "method": "prevalence_matched_top_k",
+          "k": 2756
+        },
+        "upstream": {
+          "threshold": 0.31069438321455395,
+          "tn": 45,
+          "fp": 12,
+          "fn": 11,
+          "tp": 5,
+          "n": 73,
+          "n_pred_ch": 17,
+          "n_true_ch": 16,
+          "sensitivity": 0.3125,
+          "specificity": 0.7894736842105263,
+          "f1": 0.30303030303030304,
+          "balanced_accuracy": 0.5509868421052632,
+          "method": "prevalence_matched_top_k",
+          "k": 16
+        },
+        "ncRNA_exonic": {
+          "threshold": 0.2720245510940225,
+          "tn": 68,
+          "fp": 23,
+          "fn": 23,
+          "tp": 9,
+          "n": 123,
+          "n_pred_ch": 32,
+          "n_true_ch": 32,
+          "sensitivity": 0.28125,
+          "specificity": 0.7472527472527473,
+          "f1": 0.28125,
+          "balanced_accuracy": 0.5142513736263736,
+          "method": "prevalence_matched_top_k",
+          "k": 32
+        },
+        "intronic": {
+          "threshold": 0.25091278688527247,
+          "tn": 2648,
+          "fp": 838,
+          "fn": 793,
+          "tp": 297,
+          "n": 4576,
+          "n_pred_ch": 1135,
+          "n_true_ch": 1090,
+          "sensitivity": 0.2724770642201835,
+          "specificity": 0.759609868043603,
+          "f1": 0.2669662921348315,
+          "balanced_accuracy": 0.5160434661318932,
+          "method": "prevalence_matched_top_k",
+          "k": 1090
+        },
+        "UTR5": {
+          "threshold": 0.29098086621490676,
+          "tn": 374,
+          "fp": 130,
+          "fn": 126,
+          "tp": 53,
+          "n": 683,
+          "n_pred_ch": 183,
+          "n_true_ch": 179,
+          "sensitivity": 0.29608938547486036,
+          "specificity": 0.7420634920634921,
+          "f1": 0.292817679558011,
+          "balanced_accuracy": 0.5190764387691762,
+          "method": "prevalence_matched_top_k",
+          "k": 179
+        },
+        "UTR3": {
+          "threshold": 0.23091976292927177,
+          "tn": 233,
+          "fp": 83,
+          "fn": 77,
+          "tp": 22,
+          "n": 415,
+          "n_pred_ch": 105,
+          "n_true_ch": 99,
+          "sensitivity": 0.2222222222222222,
+          "specificity": 0.7373417721518988,
+          "f1": 0.21568627450980393,
+          "balanced_accuracy": 0.4797819971870605,
+          "method": "prevalence_matched_top_k",
+          "k": 99
+        },
+        "intergenic": {
+          "threshold": 0.24364243753740636,
+          "tn": 35,
+          "fp": 9,
+          "fn": 9,
+          "tp": 0,
+          "n": 53,
+          "n_pred_ch": 9,
+          "n_true_ch": 9,
+          "sensitivity": 0.0,
+          "specificity": 0.7954545454545454,
+          "f1": 0.0,
+          "balanced_accuracy": 0.3977272727272727,
+          "method": "prevalence_matched_top_k",
+          "k": 9
+        }
+      }
+    },
+    "covariates_only": {
+      "model": "covariates_only",
+      "stratify_col": "func",
+      "min_stratum_n": 30,
+      "rows": [
+        {
+          "func": "splicing",
+          "n": 111,
+          "n_ch": 31,
+          "n_sm": 80,
+          "ch_rate": 0.27927927927927926,
+          "skipped": false,
+          "auroc": 0.675,
+          "auprc": 0.407414915612911
+        },
+        {
+          "func": "ncRNA_exonic",
+          "n": 123,
+          "n_ch": 32,
+          "n_sm": 91,
+          "ch_rate": 0.2601626016260163,
+          "skipped": false,
+          "auroc": 0.6698145604395604,
+          "auprc": 0.3532669069033146
+        },
+        {
+          "func": "exonic",
+          "n": 12423,
+          "n_ch": 2756,
+          "n_sm": 9667,
+          "ch_rate": 0.2218465749013926,
+          "skipped": false,
+          "auroc": 0.5681728218770695,
+          "auprc": 0.25731051318793186
+        },
+        {
+          "func": "upstream",
+          "n": 73,
+          "n_ch": 16,
+          "n_sm": 57,
+          "ch_rate": 0.2191780821917808,
+          "skipped": false,
+          "auroc": 0.5625,
+          "auprc": 0.25167174232582584
+        },
+        {
+          "func": "intronic",
+          "n": 4576,
+          "n_ch": 1090,
+          "n_sm": 3486,
+          "ch_rate": 0.2381993006993007,
+          "skipped": false,
+          "auroc": 0.5435462689552444,
+          "auprc": 0.26260821199648704
+        },
+        {
+          "func": "UTR5",
+          "n": 683,
+          "n_ch": 179,
+          "n_sm": 504,
+          "ch_rate": 0.26207906295754024,
+          "skipped": false,
+          "auroc": 0.5392114480801632,
+          "auprc": 0.28367949661509534
+        },
+        {
+          "func": "UTR3",
+          "n": 415,
+          "n_ch": 99,
+          "n_sm": 316,
+          "ch_rate": 0.2385542168674699,
+          "skipped": false,
+          "auroc": 0.5254443165835572,
+          "auprc": 0.25840277151717134
+        },
+        {
+          "func": "ncRNA_intronic",
+          "n": 144,
+          "n_ch": 36,
+          "n_sm": 108,
+          "ch_rate": 0.25,
+          "skipped": false,
+          "auroc": 0.4976851851851851,
+          "auprc": 0.2492107277907513
+        },
+        {
+          "func": "intergenic",
+          "n": 53,
+          "n_ch": 9,
+          "n_sm": 44,
+          "ch_rate": 0.16981132075471697,
+          "skipped": false,
+          "auroc": 0.39646464646464646,
+          "auprc": 0.15439250225835593
+        },
+        {
+          "func": "UTR5;UTR3",
+          "n": 3,
+          "skipped": true,
+          "reason": "n < 30"
+        },
+        {
+          "func": "downstream",
+          "n": 9,
+          "skipped": true,
+          "reason": "n < 30"
+        },
+        {
+          "func": "exonic;splicing",
+          "n": 2,
+          "skipped": true,
+          "reason": "n < 30"
+        },
+        {
+          "func": "ncRNA_exonic;splicing",
+          "n": 1,
+          "skipped": true,
+          "reason": "n < 30"
+        },
+        {
+          "func": "upstream;downstream",
+          "n": 4,
+          "skipped": true,
+          "reason": "n < 30"
+        }
+      ],
+      "prevalence_matched": {
+        "splicing": {
+          "threshold": 0.26502431404691096,
+          "tn": 61,
+          "fp": 19,
+          "fn": 17,
+          "tp": 14,
+          "n": 111,
+          "n_pred_ch": 33,
+          "n_true_ch": 31,
+          "sensitivity": 0.45161290322580644,
+          "specificity": 0.7625,
+          "f1": 0.4375,
+          "balanced_accuracy": 0.6070564516129032,
+          "method": "prevalence_matched_top_k",
+          "k": 31
+        },
+        "ncRNA_exonic": {
+          "threshold": 0.24906993825765764,
+          "tn": 54,
+          "fp": 37,
+          "fn": 11,
+          "tp": 21,
+          "n": 123,
+          "n_pred_ch": 58,
+          "n_true_ch": 32,
+          "sensitivity": 0.65625,
+          "specificity": 0.5934065934065934,
+          "f1": 0.4666666666666667,
+          "balanced_accuracy": 0.6248282967032968,
+          "method": "prevalence_matched_top_k",
+          "k": 32
+        },
+        "exonic": {
+          "threshold": 0.24574941842980402,
+          "tn": 7641,
+          "fp": 2026,
+          "fn": 2016,
+          "tp": 740,
+          "n": 12423,
+          "n_pred_ch": 2766,
+          "n_true_ch": 2756,
+          "sensitivity": 0.26850507982583455,
+          "specificity": 0.7904210199648288,
+          "f1": 0.26801883375588553,
+          "balanced_accuracy": 0.5294630498953317,
+          "method": "prevalence_matched_top_k",
+          "k": 2756
+        },
+        "upstream": {
+          "threshold": 0.25124678984752263,
+          "tn": 45,
+          "fp": 12,
+          "fn": 12,
+          "tp": 4,
+          "n": 73,
+          "n_pred_ch": 16,
+          "n_true_ch": 16,
+          "sensitivity": 0.25,
+          "specificity": 0.7894736842105263,
+          "f1": 0.25,
+          "balanced_accuracy": 0.5197368421052632,
+          "method": "prevalence_matched_top_k",
+          "k": 16
+        },
+        "intronic": {
+          "threshold": 0.2789339385563526,
+          "tn": 2689,
+          "fp": 797,
+          "fn": 797,
+          "tp": 293,
+          "n": 4576,
+          "n_pred_ch": 1090,
+          "n_true_ch": 1090,
+          "sensitivity": 0.26880733944954127,
+          "specificity": 0.7713711990820424,
+          "f1": 0.26880733944954127,
+          "balanced_accuracy": 0.5200892692657919,
+          "method": "prevalence_matched_top_k",
+          "k": 1090
+        },
+        "UTR5": {
+          "threshold": 0.24906993825765764,
+          "tn": 218,
+          "fp": 286,
+          "fn": 72,
+          "tp": 107,
+          "n": 683,
+          "n_pred_ch": 393,
+          "n_true_ch": 179,
+          "sensitivity": 0.5977653631284916,
+          "specificity": 0.43253968253968256,
+          "f1": 0.3741258741258741,
+          "balanced_accuracy": 0.5151525228340871,
+          "method": "prevalence_matched_top_k",
+          "k": 179
+        },
+        "UTR3": {
+          "threshold": 0.24906993825765764,
+          "tn": 159,
+          "fp": 157,
+          "fn": 49,
+          "tp": 50,
+          "n": 415,
+          "n_pred_ch": 207,
+          "n_true_ch": 99,
+          "sensitivity": 0.5050505050505051,
+          "specificity": 0.5031645569620253,
+          "f1": 0.32679738562091504,
+          "balanced_accuracy": 0.5041075310062653,
+          "method": "prevalence_matched_top_k",
+          "k": 99
+        },
+        "ncRNA_intronic": {
+          "threshold": 0.28122640902491153,
+          "tn": 73,
+          "fp": 35,
+          "fn": 27,
+          "tp": 9,
+          "n": 144,
+          "n_pred_ch": 44,
+          "n_true_ch": 36,
+          "sensitivity": 0.25,
+          "specificity": 0.6759259259259259,
+          "f1": 0.225,
+          "balanced_accuracy": 0.46296296296296297,
+          "method": "prevalence_matched_top_k",
+          "k": 36
+        },
+        "intergenic": {
+          "threshold": 0.24906993825765764,
+          "tn": 26,
+          "fp": 18,
+          "fn": 7,
+          "tp": 2,
+          "n": 53,
+          "n_pred_ch": 20,
+          "n_true_ch": 9,
+          "sensitivity": 0.2222222222222222,
+          "specificity": 0.5909090909090909,
+          "f1": 0.13793103448275862,
+          "balanced_accuracy": 0.4065656565656566,
+          "method": "prevalence_matched_top_k",
+          "k": 9
+        }
+      }
+    },
+    "ensemble_finetune_plus_cadd_plus_exonic_plus_gene_plus_mutation": {
+      "model": "ensemble_finetune_plus_cadd_plus_exonic_plus_gene_plus_mutation",
+      "stratify_col": "func",
+      "min_stratum_n": 30,
+      "rows": [
+        {
+          "func": "splicing",
+          "n": 111,
+          "n_ch": 31,
+          "n_sm": 80,
+          "ch_rate": 0.27927927927927926,
+          "skipped": false,
+          "auroc": 0.7669354838709677,
+          "auprc": 0.5998508312437838
+        },
+        {
+          "func": "ncRNA_exonic",
+          "n": 123,
+          "n_ch": 32,
+          "n_sm": 91,
+          "ch_rate": 0.2601626016260163,
+          "skipped": false,
+          "auroc": 0.6215659340659341,
+          "auprc": 0.34797302091130705
+        },
+        {
+          "func": "exonic",
+          "n": 12423,
+          "n_ch": 2756,
+          "n_sm": 9667,
+          "ch_rate": 0.2218465749013926,
+          "skipped": false,
+          "auroc": 0.593744665428433,
+          "auprc": 0.27569767624894564
+        },
+        {
+          "func": "upstream",
+          "n": 73,
+          "n_ch": 16,
+          "n_sm": 57,
+          "ch_rate": 0.2191780821917808,
+          "skipped": false,
+          "auroc": 0.5915570175438597,
+          "auprc": 0.3852178022519011
+        },
+        {
+          "func": "ncRNA_intronic",
+          "n": 144,
+          "n_ch": 36,
+          "n_sm": 108,
+          "ch_rate": 0.25,
+          "skipped": false,
+          "auroc": 0.5734310699588476,
+          "auprc": 0.2930788496428978
+        },
+        {
+          "func": "intronic",
+          "n": 4576,
+          "n_ch": 1090,
+          "n_sm": 3486,
+          "ch_rate": 0.2381993006993007,
+          "skipped": false,
+          "auroc": 0.5601783279908625,
+          "auprc": 0.26916459633545625
+        },
+        {
+          "func": "UTR5",
+          "n": 683,
+          "n_ch": 179,
+          "n_sm": 504,
+          "ch_rate": 0.26207906295754024,
+          "skipped": false,
+          "auroc": 0.5516316396204665,
+          "auprc": 0.30073484074231016
+        },
+        {
+          "func": "UTR3",
+          "n": 415,
+          "n_ch": 99,
+          "n_sm": 316,
+          "ch_rate": 0.2385542168674699,
+          "skipped": false,
+          "auroc": 0.5065368878660018,
+          "auprc": 0.2349609265225141
+        },
+        {
+          "func": "intergenic",
+          "n": 53,
+          "n_ch": 9,
+          "n_sm": 44,
+          "ch_rate": 0.16981132075471697,
+          "skipped": false,
+          "auroc": 0.3851010101010101,
+          "auprc": 0.1452735344686876
+        },
+        {
+          "func": "UTR5;UTR3",
+          "n": 3,
+          "skipped": true,
+          "reason": "n < 30"
+        },
+        {
+          "func": "downstream",
+          "n": 9,
+          "skipped": true,
+          "reason": "n < 30"
+        },
+        {
+          "func": "exonic;splicing",
+          "n": 2,
+          "skipped": true,
+          "reason": "n < 30"
+        },
+        {
+          "func": "ncRNA_exonic;splicing",
+          "n": 1,
+          "skipped": true,
+          "reason": "n < 30"
+        },
+        {
+          "func": "upstream;downstream",
+          "n": 4,
+          "skipped": true,
+          "reason": "n < 30"
+        }
+      ],
+      "prevalence_matched": {
+        "splicing": {
+          "threshold": 0.25640166764008837,
+          "tn": 66,
+          "fp": 14,
+          "fn": 14,
+          "tp": 17,
+          "n": 111,
+          "n_pred_ch": 31,
+          "n_true_ch": 31,
+          "sensitivity": 0.5483870967741935,
+          "specificity": 0.825,
+          "f1": 0.5483870967741935,
+          "balanced_accuracy": 0.6866935483870967,
+          "method": "prevalence_matched_top_k",
+          "k": 31
+        },
+        "ncRNA_exonic": {
+          "threshold": 0.27405785297052776,
+          "tn": 70,
+          "fp": 21,
+          "fn": 21,
+          "tp": 11,
+          "n": 123,
+          "n_pred_ch": 32,
+          "n_true_ch": 32,
+          "sensitivity": 0.34375,
+          "specificity": 0.7692307692307693,
+          "f1": 0.34375,
+          "balanced_accuracy": 0.5564903846153846,
+          "method": "prevalence_matched_top_k",
+          "k": 32
+        },
+        "exonic": {
+          "threshold": 0.2575111139492809,
+          "tn": 7716,
+          "fp": 1951,
+          "fn": 1950,
+          "tp": 806,
+          "n": 12423,
+          "n_pred_ch": 2757,
+          "n_true_ch": 2756,
+          "sensitivity": 0.29245283018867924,
+          "specificity": 0.7981793731250647,
+          "f1": 0.2923997823326682,
+          "balanced_accuracy": 0.5453161016568719,
+          "method": "prevalence_matched_top_k",
+          "k": 2756
+        },
+        "upstream": {
+          "threshold": 0.3084156978525053,
+          "tn": 47,
+          "fp": 10,
+          "fn": 10,
+          "tp": 6,
+          "n": 73,
+          "n_pred_ch": 16,
+          "n_true_ch": 16,
+          "sensitivity": 0.375,
+          "specificity": 0.8245614035087719,
+          "f1": 0.375,
+          "balanced_accuracy": 0.5997807017543859,
+          "method": "prevalence_matched_top_k",
+          "k": 16
+        },
+        "ncRNA_intronic": {
+          "threshold": 0.27463533249278854,
+          "tn": 81,
+          "fp": 27,
+          "fn": 27,
+          "tp": 9,
+          "n": 144,
+          "n_pred_ch": 36,
+          "n_true_ch": 36,
+          "sensitivity": 0.25,
+          "specificity": 0.75,
+          "f1": 0.25,
+          "balanced_accuracy": 0.5,
+          "method": "prevalence_matched_top_k",
+          "k": 36
+        },
+        "intronic": {
+          "threshold": 0.2654842011042153,
+          "tn": 2701,
+          "fp": 785,
+          "fn": 783,
+          "tp": 307,
+          "n": 4576,
+          "n_pred_ch": 1092,
+          "n_true_ch": 1090,
+          "sensitivity": 0.281651376146789,
+          "specificity": 0.7748135398737809,
+          "f1": 0.28139321723189736,
+          "balanced_accuracy": 0.528232458010285,
+          "method": "prevalence_matched_top_k",
+          "k": 1090
+        },
+        "UTR5": {
+          "threshold": 0.29606940947713495,
+          "tn": 380,
+          "fp": 124,
+          "fn": 121,
+          "tp": 58,
+          "n": 683,
+          "n_pred_ch": 182,
+          "n_true_ch": 179,
+          "sensitivity": 0.3240223463687151,
+          "specificity": 0.753968253968254,
+          "f1": 0.32132963988919666,
+          "balanced_accuracy": 0.5389953001684845,
+          "method": "prevalence_matched_top_k",
+          "k": 179
+        },
+        "UTR3": {
+          "threshold": 0.24108635329646286,
+          "tn": 237,
+          "fp": 79,
+          "fn": 79,
+          "tp": 20,
+          "n": 415,
+          "n_pred_ch": 99,
+          "n_true_ch": 99,
+          "sensitivity": 0.20202020202020202,
+          "specificity": 0.75,
+          "f1": 0.20202020202020202,
+          "balanced_accuracy": 0.476010101010101,
+          "method": "prevalence_matched_top_k",
+          "k": 99
+        },
+        "intergenic": {
+          "threshold": 0.2544584176643547,
+          "tn": 35,
+          "fp": 9,
+          "fn": 9,
+          "tp": 0,
+          "n": 53,
+          "n_pred_ch": 9,
+          "n_true_ch": 9,
+          "sensitivity": 0.0,
+          "specificity": 0.7954545454545454,
+          "f1": 0.0,
+          "balanced_accuracy": 0.3977272727272727,
+          "method": "prevalence_matched_top_k",
+          "k": 9
+        }
+      }
+    }
+  },
+  "func_col": "func",
+  "by_exonic_func": {
+    "finetune_center_only": {
+      "model": "finetune_center_only",
+      "stratify_col": "exonic_func",
+      "min_stratum_n": 30,
+      "rows": [
+        {
+          "exonic_func": "synonymous SNV",
+          "n": 4317,
+          "n_ch": 948,
+          "n_sm": 3369,
+          "ch_rate": 0.21959694232105628,
+          "skipped": false,
+          "auroc": 0.579744518462577,
+          "auprc": 0.26248580548313727
+        },
+        {
+          "exonic_func": "nonsynonymous SNV",
+          "n": 7820,
+          "n_ch": 1737,
+          "n_sm": 6083,
+          "ch_rate": 0.2221227621483376,
+          "skipped": false,
+          "auroc": 0.5785410817220352,
+          "auprc": 0.26977021941687573
+        },
+        {
+          "exonic_func": "stopgain",
+          "n": 230,
+          "n_ch": 65,
+          "n_sm": 165,
+          "ch_rate": 0.2826086956521739,
+          "skipped": false,
+          "auroc": 0.5731468531468531,
+          "auprc": 0.3197389911725286
+        },
+        {
+          "exonic_func": ".",
+          "n": 6195,
+          "n_ch": 1497,
+          "n_sm": 4698,
+          "ch_rate": 0.24164648910411624,
+          "skipped": false,
+          "auroc": 0.5440985561302825,
+          "auprc": 0.26791254739761705
+        },
+        {
+          "exonic_func": "unknown",
+          "n": 54,
+          "n_ch": 7,
+          "n_sm": 47,
+          "ch_rate": 0.12962962962962962,
+          "skipped": false,
+          "auroc": 0.36322188449848025,
+          "auprc": 0.10873098536613554
+        },
+        {
+          "exonic_func": "stoploss",
+          "n": 4,
+          "skipped": true,
+          "reason": "n < 30"
+        }
+      ],
+      "prevalence_matched": {
+        "synonymous SNV": {
+          "threshold": 0.2583259885691872,
+          "tn": 2658,
+          "fp": 711,
+          "fn": 689,
+          "tp": 259,
+          "n": 4317,
+          "n_pred_ch": 970,
+          "n_true_ch": 948,
+          "sensitivity": 0.2732067510548523,
+          "specificity": 0.7889581478183437,
+          "f1": 0.27007299270072993,
+          "balanced_accuracy": 0.531082449436598,
+          "method": "prevalence_matched_top_k",
+          "k": 948
+        },
+        "nonsynonymous SNV": {
+          "threshold": 0.2523840452764101,
+          "tn": 4817,
+          "fp": 1266,
+          "fn": 1201,
+          "tp": 536,
+          "n": 7820,
+          "n_pred_ch": 1802,
+          "n_true_ch": 1737,
+          "sensitivity": 0.30857800805987334,
+          "specificity": 0.7918790070688805,
+          "f1": 0.30291042667420176,
+          "balanced_accuracy": 0.5502285075643769,
+          "method": "prevalence_matched_top_k",
+          "k": 1737
+        },
+        "stopgain": {
+          "threshold": 0.24798742624020273,
+          "tn": 120,
+          "fp": 45,
+          "fn": 44,
+          "tp": 21,
+          "n": 230,
+          "n_pred_ch": 66,
+          "n_true_ch": 65,
+          "sensitivity": 0.3230769230769231,
+          "specificity": 0.7272727272727273,
+          "f1": 0.32061068702290074,
+          "balanced_accuracy": 0.5251748251748252,
+          "method": "prevalence_matched_top_k",
+          "k": 65
+        },
+        ".": {
+          "threshold": 0.25683199138751883,
+          "tn": 3592,
+          "fp": 1106,
+          "fn": 1083,
+          "tp": 414,
+          "n": 6195,
+          "n_pred_ch": 1520,
+          "n_true_ch": 1497,
+          "sensitivity": 0.27655310621242485,
+          "specificity": 0.7645806726266496,
+          "f1": 0.27444481272787535,
+          "balanced_accuracy": 0.5205668894195372,
+          "method": "prevalence_matched_top_k",
+          "k": 1497
+        },
+        "unknown": {
+          "threshold": 0.24798742624020273,
+          "tn": 40,
+          "fp": 7,
+          "fn": 7,
+          "tp": 0,
+          "n": 54,
+          "n_pred_ch": 7,
+          "n_true_ch": 7,
+          "sensitivity": 0.0,
+          "specificity": 0.851063829787234,
+          "f1": 0.0,
+          "balanced_accuracy": 0.425531914893617,
+          "method": "prevalence_matched_top_k",
+          "k": 7
+        }
+      }
+    },
+    "covariates_only": {
+      "model": "covariates_only",
+      "stratify_col": "exonic_func",
+      "min_stratum_n": 30,
+      "rows": [
+        {
+          "exonic_func": "nonsynonymous SNV",
+          "n": 7820,
+          "n_ch": 1737,
+          "n_sm": 6083,
+          "ch_rate": 0.2221227621483376,
+          "skipped": false,
+          "auroc": 0.5690081108852014,
+          "auprc": 0.2555660831459974
+        },
+        {
+          "exonic_func": "synonymous SNV",
+          "n": 4317,
+          "n_ch": 948,
+          "n_sm": 3369,
+          "ch_rate": 0.21959694232105628,
+          "skipped": false,
+          "auroc": 0.563875550595965,
+          "auprc": 0.2559680616273442
+        },
+        {
+          "exonic_func": "unknown",
+          "n": 54,
+          "n_ch": 7,
+          "n_sm": 47,
+          "ch_rate": 0.12962962962962962,
+          "skipped": false,
+          "auroc": 0.5562310030395137,
+          "auprc": 0.2111565158978952
+        },
+        {
+          "exonic_func": ".",
+          "n": 6195,
+          "n_ch": 1497,
+          "n_sm": 4698,
+          "ch_rate": 0.24164648910411624,
+          "skipped": false,
+          "auroc": 0.5469262634819803,
+          "auprc": 0.26710773900056123
+        },
+        {
+          "exonic_func": "stopgain",
+          "n": 230,
+          "n_ch": 65,
+          "n_sm": 165,
+          "ch_rate": 0.2826086956521739,
+          "skipped": false,
+          "auroc": 0.5286713286713287,
+          "auprc": 0.2948075446973135
+        },
+        {
+          "exonic_func": "stoploss",
+          "n": 4,
+          "skipped": true,
+          "reason": "n < 30"
+        }
+      ],
+      "prevalence_matched": {
+        "nonsynonymous SNV": {
+          "threshold": 0.24730219998733033,
+          "tn": 4803,
+          "fp": 1280,
+          "fn": 1280,
+          "tp": 457,
+          "n": 7820,
+          "n_pred_ch": 1737,
+          "n_true_ch": 1737,
+          "sensitivity": 0.2630972941853771,
+          "specificity": 0.7895775110964984,
+          "f1": 0.2630972941853771,
+          "balanced_accuracy": 0.5263374026409378,
+          "method": "prevalence_matched_top_k",
+          "k": 1737
+        },
+        "synonymous SNV": {
+          "threshold": 0.23281737233621272,
+          "tn": 1769,
+          "fp": 1600,
+          "fn": 429,
+          "tp": 519,
+          "n": 4317,
+          "n_pred_ch": 2119,
+          "n_true_ch": 948,
+          "sensitivity": 0.5474683544303798,
+          "specificity": 0.5250816265954289,
+          "f1": 0.33844147375285294,
+          "balanced_accuracy": 0.5362749905129043,
+          "method": "prevalence_matched_top_k",
+          "k": 948
+        },
+        "unknown": {
+          "threshold": 0.26732562120487063,
+          "tn": 41,
+          "fp": 6,
+          "fn": 6,
+          "tp": 1,
+          "n": 54,
+          "n_pred_ch": 7,
+          "n_true_ch": 7,
+          "sensitivity": 0.14285714285714285,
+          "specificity": 0.8723404255319149,
+          "f1": 0.14285714285714285,
+          "balanced_accuracy": 0.5075987841945289,
+          "method": "prevalence_matched_top_k",
+          "k": 7
+        },
+        ".": {
+          "threshold": 0.26502431404691096,
+          "tn": 3617,
+          "fp": 1081,
+          "fn": 1081,
+          "tp": 416,
+          "n": 6195,
+          "n_pred_ch": 1497,
+          "n_true_ch": 1497,
+          "sensitivity": 0.27788911155644624,
+          "specificity": 0.76990208599404,
+          "f1": 0.27788911155644624,
+          "balanced_accuracy": 0.5238955987752432,
+          "method": "prevalence_matched_top_k",
+          "k": 1497
+        },
+        "stopgain": {
+          "threshold": 0.27929687831209815,
+          "tn": 118,
+          "fp": 47,
+          "fn": 47,
+          "tp": 18,
+          "n": 230,
+          "n_pred_ch": 65,
+          "n_true_ch": 65,
+          "sensitivity": 0.27692307692307694,
+          "specificity": 0.7151515151515152,
+          "f1": 0.27692307692307694,
+          "balanced_accuracy": 0.49603729603729607,
+          "method": "prevalence_matched_top_k",
+          "k": 65
+        }
+      }
+    },
+    "ensemble_finetune_plus_cadd_plus_exonic_plus_gene_plus_mutation": {
+      "model": "ensemble_finetune_plus_cadd_plus_exonic_plus_gene_plus_mutation",
+      "stratify_col": "exonic_func",
+      "min_stratum_n": 30,
+      "rows": [
+        {
+          "exonic_func": "synonymous SNV",
+          "n": 4317,
+          "n_ch": 948,
+          "n_sm": 3369,
+          "ch_rate": 0.21959694232105628,
+          "skipped": false,
+          "auroc": 0.5950899739871978,
+          "auprc": 0.27115151450446134
+        },
+        {
+          "exonic_func": "nonsynonymous SNV",
+          "n": 7820,
+          "n_ch": 1737,
+          "n_sm": 6083,
+          "ch_rate": 0.2221227621483376,
+          "skipped": false,
+          "auroc": 0.5937983589324837,
+          "auprc": 0.2784488187018128
+        },
+        {
+          "exonic_func": ".",
+          "n": 6195,
+          "n_ch": 1497,
+          "n_sm": 4698,
+          "ch_rate": 0.24164648910411624,
+          "skipped": false,
+          "auroc": 0.5611349703806648,
+          "auprc": 0.27702066001141945
+        },
+        {
+          "exonic_func": "stopgain",
+          "n": 230,
+          "n_ch": 65,
+          "n_sm": 165,
+          "ch_rate": 0.2826086956521739,
+          "skipped": false,
+          "auroc": 0.557016317016317,
+          "auprc": 0.3220504562415377
+        },
+        {
+          "exonic_func": "unknown",
+          "n": 54,
+          "n_ch": 7,
+          "n_sm": 47,
+          "ch_rate": 0.12962962962962962,
+          "skipped": false,
+          "auroc": 0.46200607902735563,
+          "auprc": 0.13277399848828422
+        },
+        {
+          "exonic_func": "stoploss",
+          "n": 4,
+          "skipped": true,
+          "reason": "n < 30"
+        }
+      ],
+      "prevalence_matched": {
+        "synonymous SNV": {
+          "threshold": 0.2552390202182873,
+          "tn": 2694,
+          "fp": 675,
+          "fn": 675,
+          "tp": 273,
+          "n": 4317,
+          "n_pred_ch": 948,
+          "n_true_ch": 948,
+          "sensitivity": 0.2879746835443038,
+          "specificity": 0.7996438112199465,
+          "f1": 0.2879746835443038,
+          "balanced_accuracy": 0.5438092473821252,
+          "method": "prevalence_matched_top_k",
+          "k": 948
+        },
+        "nonsynonymous SNV": {
+          "threshold": 0.2578133882687522,
+          "tn": 4857,
+          "fp": 1226,
+          "fn": 1226,
+          "tp": 511,
+          "n": 7820,
+          "n_pred_ch": 1737,
+          "n_true_ch": 1737,
+          "sensitivity": 0.2941853770869315,
+          "specificity": 0.7984547098471149,
+          "f1": 0.2941853770869315,
+          "balanced_accuracy": 0.5463200434670232,
+          "method": "prevalence_matched_top_k",
+          "k": 1737
+        },
+        ".": {
+          "threshold": 0.26825526393562255,
+          "tn": 3619,
+          "fp": 1079,
+          "fn": 1066,
+          "tp": 431,
+          "n": 6195,
+          "n_pred_ch": 1510,
+          "n_true_ch": 1497,
+          "sensitivity": 0.2879091516366065,
+          "specificity": 0.7703277990634313,
+          "f1": 0.28666444961755905,
+          "balanced_accuracy": 0.5291184753500189,
+          "method": "prevalence_matched_top_k",
+          "k": 1497
+        },
+        "stopgain": {
+          "threshold": 0.27896316890013123,
+          "tn": 124,
+          "fp": 41,
+          "fn": 41,
+          "tp": 24,
+          "n": 230,
+          "n_pred_ch": 65,
+          "n_true_ch": 65,
+          "sensitivity": 0.36923076923076925,
+          "specificity": 0.7515151515151515,
+          "f1": 0.36923076923076925,
+          "balanced_accuracy": 0.5603729603729604,
+          "method": "prevalence_matched_top_k",
+          "k": 65
+        },
+        "unknown": {
+          "threshold": 0.28617657549057696,
+          "tn": 40,
+          "fp": 7,
+          "fn": 7,
+          "tp": 0,
+          "n": 54,
+          "n_pred_ch": 7,
+          "n_true_ch": 7,
+          "sensitivity": 0.0,
+          "specificity": 0.851063829787234,
+          "f1": 0.0,
+          "balanced_accuracy": 0.425531914893617,
+          "method": "prevalence_matched_top_k",
+          "k": 7
+        }
+      }
+    }
+  },
+  "exonic_func_col": "exonic_func"
+}

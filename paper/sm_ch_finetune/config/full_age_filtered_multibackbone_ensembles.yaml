@@ -1,0 +1,43 @@
+# Full-cohort multi-backbone ensembles (AG / NTv3 / Borzoi ± covariates).
+# Eval: scripts/25_evaluate_full_multibackbone_ensembles.py
+project_dir: .
+dataset: full_age_filtered
+
+data:
+  age_filtered_dir: data/processed_age_filtered
+  use_cds_filter: false
+  use_age_filter: true
+  seed: 42
+
+finetune:
+  alphagenome:
+    train_predictions: results/finetune_full_train_predictions.parquet
+    test_predictions: results/finetune_full_test_predictions.parquet
+  ntv3:
+    train_predictions: ../sm_ch_finetune_ntv3/results/ntv3_full_train_predictions.parquet
+    test_predictions: ../sm_ch_finetune_ntv3/results/ntv3_full_test_predictions.parquet
+  borzoi:
+    train_predictions: ../sm_ch_finetune_borzoi/results/borzoi_full_train_predictions.parquet
+    test_predictions: ../sm_ch_finetune_borzoi/results/borzoi_full_test_predictions.parquet
+
+ensemble:
+  include_cadd: true
+  cadd_col: cadd
+  include_exonic_func: true
+  exonic_func_col: exonic_func
+  include_gene: true
+  gene_col: gene
+  gene_top_k: 100
+  include_mutation_type: true
+  mutation_type_col: mutation_type
+  lr_C: 0.5
+  lr_max_iter: 2000
+  stratify_func: true
+  func_col: func
+  stratify_exonic_func: true
+  min_stratum_n: 30
+
+# Default classifiers for meta-models (covariates / stacks / routed+cov)
+classifiers: [lr, rf, xgb]
+
+results_file: results/full_multibackbone_ensembles.json
