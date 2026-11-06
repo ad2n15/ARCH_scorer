@@ -38,8 +38,19 @@ class NTv3Backbone:
         kw = {"trust_remote_code": True, "code_revision": self.CODE_REVISION}
         if src == self.REPO:
             kw["revision"] = self.REVISION
-        config = AutoConfig.from_pretrained(src, **kw)
-        full = AutoModel.from_pretrained(src, config=config, **kw)
+        try:
+            config = AutoConfig.from_pretrained(src, **kw)
+            full = AutoModel.from_pretrained(src, config=config, **kw)
+        except OSError as e:
+            if "gated" in str(e).lower() or "401" in str(e):
+                raise SystemExit(
+                    "NTv3 is a gated model on Hugging Face. Once per user:\n"
+                    "  1. open https://huggingface.co/InstaDeepAI/NTv3_650M_post and accept the licence\n"
+                    "     (also https://huggingface.co/InstaDeepAI/ntv3_base_model, which holds its code)\n"
+                    "  2. create a read token at https://huggingface.co/settings/tokens\n"
+                    "  3. run `hf auth login` (or export HF_TOKEN=...) and try again\n"
+                    "Or point ARCH_NTV3_PATH / --model-path at a local copy of the weights.") from None
+            raise
         core = type(full.core).__bases__[0](config)  # the core without NTv3's own task heads
         missing = core.load_state_dict(full.core.state_dict(), strict=False).missing_keys
         if missing:

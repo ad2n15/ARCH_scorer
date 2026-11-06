@@ -56,8 +56,14 @@ pip install -e ".[explain]"       # AlphaGenome track-score models with SHAP
 pip install -e ".[paper]"         # redraw the paper's figures
 ```
 
-- **NTv3** downloads its weights (about 2.6 GB) from Hugging Face on first use.
-- **Borzoi** needs gReLU.
+- **NTv3** is a gated model on Hugging Face, so before first use you need to:
+  1. accept the licence at https://huggingface.co/InstaDeepAI/NTv3_650M_post and https://huggingface.co/InstaDeepAI/ntv3_base_model;
+  2. create a read token at https://huggingface.co/settings/tokens;
+  3. run `hf auth login`, or `export HF_TOKEN=...`.
+
+  The weights (about 2.6 GB) are then downloaded on first use. To use a local copy instead, set `ARCH_NTV3_PATH` or pass `--model-path`.
+- **Borzoi** downloads from Hugging Face without a login.
+- **Borzoi** needs gReLU (`pip install -e ".[borzoi]"`).
 - **AlphaGenome** needs `alphagenome_research`, JAX, and fold_1 weights from Kaggle (`python scripts/install_fold1.py`; you must accept the AlphaGenome model terms).
 - **CPU:** the models run on a CPU, but slowly. A GPU is recommended for more than a few variants.
 
