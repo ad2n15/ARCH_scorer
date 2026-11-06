@@ -106,6 +106,8 @@ arch-score --model emb_baseline --extract-emb --chrom 20 --pos 32437607 --ref T 
 | `api_baseline`, `api_only` | AlphaGenome API key |
 | `emb_baseline` | fold_1 weights and a local FASTA (`ARCH_FASTA`; `bash scripts/install_reference.sh ag`), or a precomputed `--emb` file |
 
+The AlphaGenome track scores come from the hosted API at run time. They can differ slightly from the scores used to train the models; for one test variant, nine of ten tracks agreed within about 0.006, and splice junction differed by 0.02 (about 0.1 SD). Scores from `api_*` models may therefore vary a little from the paper's values. The fine-tuned models (`arch-score-ft`) run frozen weights locally and reproduce stored scores exactly.
+
 CADD and functional class are fetched live, or you can pass them with `--cadd-phred` / `--func`. ANNOVAR is optional (`scripts/install_annovar.sh`). Without it, the ANNOVAR-style functional class is computed from UCSC RefSeq transcripts.
 
 ## Data
