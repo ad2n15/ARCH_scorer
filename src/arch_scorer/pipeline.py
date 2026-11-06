@@ -104,6 +104,12 @@ class ArchScorer:
     ):
         path = resolve_artifact(model, artifact_path)
         self.artifact: dict[str, Any] = joblib.load(path)
+        if isinstance(self.artifact.get("clf"), str):  # XGBoost booster stored as version-independent JSON
+            from xgboost import XGBClassifier
+
+            clf = XGBClassifier()
+            clf.load_model(str(Path(path).parent / self.artifact["clf"]))
+            self.artifact["clf"] = clf
         self.annovar_dir = annovar_dir
         self.fetch_cadd = fetch_cadd
         self.fetch_annovar = fetch_annovar
@@ -250,9 +256,16 @@ class ArchScorer:
         if func_refgene is None:
             if not self.fetch_annovar:
                 raise ValueError("func_refgene required when fetch_annovar=False")
-            func_refgene = annotate_func_refgene(
-                chrom, pos, ref, alt, annovar_dir=self.annovar_dir
-            )
+            try:
+                func_refgene = annotate_func_refgene(
+                    chrom, pos, ref, alt, annovar_dir=self.annovar_dir
+                )
+            except FileNotFoundError:
+                # No local ANNOVAR: same ANNOVAR-style Func.refGene from UCSC RefSeq (no key needed)
+                from .finetuned.annotate import annovar_func, refgene_transcripts
+
+                c = str(chrom).replace("chr", "")
+                func_refgene, _ = annovar_func(int(pos), refgene_transcripts(c, int(pos)))
 
         if self.is_emb:
             if emb_diff is None:

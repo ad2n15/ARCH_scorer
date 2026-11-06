@@ -213,6 +213,8 @@ def fit_emb(df: pd.DataFrame, y: np.ndarray, emb_cols: list[str], oof: dict) -> 
     }
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     path = OUT_DIR / "emb_baseline_xgb_gene_onehot.joblib"
+    art["clf"].save_model(OUT_DIR / "emb_baseline_xgb_gene_onehot.xgb.json")  # version-independent booster
+    art["clf"] = "emb_baseline_xgb_gene_onehot.xgb.json"
     joblib.dump(art, path)
     meta = {k: v for k, v in art.items() if k not in ("emb_pca", "api_imp", "base_ct", "clf")}
     (OUT_DIR / "emb_baseline_xgb_gene_onehot.meta.json").write_text(json.dumps(meta, indent=2) + "\n")
@@ -258,6 +260,8 @@ def fit_api(df: pd.DataFrame, y: np.ndarray, api_feats: list[str], oof: dict) ->
         **oof,
     }
     path = OUT_DIR / "api_baseline_xgb_gene_onehot.joblib"
+    art["clf"].save_model(OUT_DIR / "api_baseline_xgb_gene_onehot.xgb.json")  # version-independent booster
+    art["clf"] = "api_baseline_xgb_gene_onehot.xgb.json"
     joblib.dump(art, path)
     meta = {k: v for k, v in art.items() if k not in ("emb_pca", "api_imp", "base_ct", "clf")}
     (OUT_DIR / "api_baseline_xgb_gene_onehot.meta.json").write_text(json.dumps(meta, indent=2) + "\n")

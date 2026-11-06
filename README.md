@@ -106,7 +106,7 @@ arch-score --model emb_baseline --extract-emb --chrom 20 --pos 32437607 --ref T 
 | `api_baseline`, `api_only` | AlphaGenome API key |
 | `emb_baseline` | fold_1 weights and a local FASTA (`ARCH_FASTA`; `bash scripts/install_reference.sh ag`), or a precomputed `--emb` file |
 
-CADD and functional class are fetched live, or you can pass them with `--cadd-phred` / `--func`. ANNOVAR is optional (`scripts/install_annovar.sh`).
+CADD and functional class are fetched live, or you can pass them with `--cadd-phred` / `--func`. ANNOVAR is optional (`scripts/install_annovar.sh`). Without it, the ANNOVAR-style functional class is computed from UCSC RefSeq transcripts.
 
 ## Data
 
