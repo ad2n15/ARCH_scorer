@@ -19,6 +19,7 @@ import pandas as pd
 import torch
 
 from . import annotate as A
+from . import gnomad as G
 from .backbones import BACKBONE_CLASSES, WINDOW
 from .fusion import FusionLR
 from .heads import load_head
@@ -65,10 +66,11 @@ def read_variants(path: Path) -> list[str]:
 
 class Scorer:
     def __init__(self, backbone: str = "ntv3", tasks=TASKS, model_path: str | None = None,
-                 device: str | None = None, models_dir: Path = MODELS):
+                 device: str | None = None, models_dir: Path = MODELS, gnomad: bool = True):
         if backbone not in BACKBONE_CLASSES:
             raise ValueError(f"backbone must be one of {BACKBONES}")
         self.name = backbone
+        self.gnomad = gnomad  # add gnomAD v4.1 frequency, allele balance and carrier age (public API)
         self.tasks, self.meta = {}, {}
         for t in tasks:
             d = Path(models_dir) / backbone / t
@@ -159,6 +161,10 @@ class Scorer:
             out[f"{t}_score"] = score
             out[f"{t}_score_type"] = np.where(np.isfinite(score), np.where(use_fused, "fused", "finetuned"), "")
             out[f"{t}_flag"] = np.where(np.isfinite(score), np.where(score >= cut, "high", "-"), "")
+        if self.gnomad:
+            g = pd.DataFrame(G.fetch([v.id for v in parsed], progress=progress), columns=G.COLUMNS)
+            for c in G.COLUMNS:
+                out[c] = g[c].to_numpy()
         return pd.concat([out, pd.DataFrame(bad)], ignore_index=True) if bad else out
 
 
@@ -176,6 +182,8 @@ def main() -> None:
     ap.add_argument("--html", default=None, metavar="PATH", help="also write a readable HTML report")
     ap.add_argument("--model-path", default=None, help="local backbone weights (default: download)")
     ap.add_argument("--device", default=None)
+    ap.add_argument("--no-gnomad", action="store_true",
+                    help="skip gnomAD v4.1 frequency, allele balance and carrier age (fetched from the public API)")
     view = ap.add_mutually_exclusive_group()
     view.add_argument("--full", action="store_true", help="print every column instead of the summary")
     view.add_argument("--quiet", action="store_true", help="print no table, only where the files went")
@@ -184,7 +192,7 @@ def main() -> None:
     variants = read_variants(Path(a.variants))
     log = (lambda *x: None) if a.quiet else (lambda *x: print(*x, file=sys.stderr, flush=True))
     log(f"Loading {a.backbone} (the first run downloads the backbone weights; this can take a few minutes)")
-    scorer = Scorer(a.backbone, tasks, a.model_path, a.device)
+    scorer = Scorer(a.backbone, tasks, a.model_path, a.device, gnomad=not a.no_gnomad)
     log(f"Scoring {len(variants)} variant(s) on {scorer.backbone.device}")
     df = scorer.score(variants, progress=None if a.quiet else _progress)
     df.to_csv(a.out, index=False)

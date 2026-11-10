@@ -94,6 +94,12 @@ def _fake_scorer(monkeypatch, logits):
                 "exonic_func": "nonsynonymous SNV" if func == "exonic" else "."}
 
     monkeypatch.setattr(P.A, "annotate", fake_annotate)
+    rec = {"genome": {"ac": 18, "an": 1000, "homozygote_count": 0,
+                      "age_distribution": {"het": {"bin_freq": [0, 1, 0, 1, 0, 0, 0, 0, 1, 0],
+                                                   "n_smaller": 0, "n_larger": 2}},
+                      "quality_metrics": {"allele_balance": {"alt": {"bin_freq": [0] * 4 + [7, 7, 1, 2, 1] + [0] * 11}}}}}
+    monkeypatch.setattr(P.G, "fetch", lambda ids, progress=None: [
+        {c: P.G.summarise(rec if k == 0 else None).get(c, np.nan) for c in P.G.COLUMNS} for k in range(len(ids))])
     monkeypatch.setattr(P.Scorer, "embed", lambda self, vs, progress=None: (
         torch.zeros(len(vs), 1536), [v.ref for v in vs]))
     return s
@@ -131,11 +137,26 @@ def test_flags_summary_and_html(monkeypatch, tmp_path):
     assert df[df.variant_id == "2-25234373-C-T"].iloc[0]["arch21_cnc_score_type"] == "finetuned"
 
     text = summary_table(df, TASKS, s.meta)
-    assert "ARCH21-NC" in text and "HIGH" in text and "not scored" in text
-    assert max(len(line) for line in text.splitlines()[:6]) <= 120
+    assert "non-coding model" in text and "coding + non-coding model" in text and "HIGH" in text
+    assert "not scored" in text and "(18)" in text and "NC" not in text.split()
+    assert max(len(line) for line in text.splitlines()[:7]) <= 130
 
     df.loc[0, "notes"] = "<script>x</script>"
     out = write_html(df, TASKS, s.meta, "ntv3", tmp_path / "r.html")
     page = out.read_text()
     assert page.count('class="card"') == len(df)
     assert "<script>x</script>" not in page and "&lt;script&gt;" in page
+    assert "Allele balance: median <b>" in page and "not in gnomAD v4.1" in page
+
+
+def test_gnomad_summaries():
+    from arch_scorer.finetuned import gnomad as G
+
+    assert G.ab_median([0, 0, 0, 0, 7, 7, 1, 2, 1] + [0] * 11) == pytest.approx(0.275)  # 18 carriers: median (9.5th) falls in 0.25-0.30
+    assert G.ab_median([0] * 20) != G.ab_median([0] * 20)  # nan
+    # 2 carriers > 80 and three in 35-40, 45-50, 70-75 -> median carrier is in 70-75
+    assert G.age_median([0, 1, 0, 1, 0, 0, 0, 0, 1, 0], 0, 2) == 72.5
+    two = {"ac": 1, "an": 10, "homozygote_count": 0}
+    r = G.summarise({"exome": two, "genome": two})
+    assert r["gnomad_ac"] == 2 and r["gnomad_an"] == 20 and r["gnomad_af"] == 0.1
+    assert G.summarise({"exome": {"ac": 0, "an": 5}})["gnomad_status"].startswith("not observed")

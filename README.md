@@ -86,7 +86,9 @@ A summary cell such as `0.412 p97 HIGH` gives:
 - its percentile among held-out test variants (mostly germline for the 21-gene tasks, and mostly other somatic for genome-wide);
 - `HIGH` when the score is above the prevalence-matched threshold used in the paper. This is the test-set quantile equal to 1 − the share of positives, for example p95 for `arch21_cnc`.
 
-`n/a` means the task does not apply, for example a variant outside the 21 genes.
+`n/a` means the task does not apply, for example a variant outside the 21 genes. The summary names each model in full: *21 ARCH genes, non-coding model*; *21 ARCH genes, coding + non-coding model*; *Genome-wide model*.
+
+Each variant also gets gnomAD v4.1 context (exomes + genomes), shown in the summary and the HTML report: the median allele balance (AB) of carriers, the median age of heterozygous carriers, and in the report both histograms. Germline heterozygous variants have AB near 0.5. Clonal blood variants are carried by a minority of cells, so their AB is well below 0.5 and their carriers tend to be older. The paper used these signals to label somatic variants, so they are context, not an independent check of the score. Use `--no-gnomad` to skip them.
 
 Output columns, for each task:
 - `<task>_<backbone>`: the fine-tuned score;
@@ -96,10 +98,17 @@ Output columns, for each task:
 - `<task>_flag`: `high` above the prevalence-matched threshold, `-` below it, and empty when the task does not apply;
 - `notes`: for example, outside the 21 genes, REF mismatch, or coding variant scored by the non-coding model.
 
+gnomAD columns, once per variant:
+- `gnomad_status`: `found`, `not in gnomAD v4.1`, `not observed in gnomAD v4.1 (AC = 0)`, or `unavailable` when the API could not be reached;
+- `gnomad_af`, `gnomad_ac`, `gnomad_an`, `gnomad_hom`: frequency, allele count, allele number and homozygote count;
+- `gnomad_ab_median`, `gnomad_ab_n`, `gnomad_ab_hist`: carriers' allele balance, as 20 bins of 0.05;
+- `gnomad_age_median`, `gnomad_age_n`, `gnomad_age_hist`: heterozygous carriers' age, as <30, 5-year bins from 30 to 80, and >80.
+
 Annotations are fetched from free public APIs, with no keys needed:
 - **reference sequence:** UCSC (Ensembl as fallback);
 - **functional class:** computed from UCSC RefSeq transcripts in the ANNOVAR style;
-- **CADD-PHRED and coding consequence:** CADD v1.7 API.
+- **CADD-PHRED and coding consequence:** CADD v1.7 API;
+- **frequency, allele balance and carrier age:** gnomAD v4.1 GraphQL API.
 
 For offline or batch use, set `ARCH_FASTA=/path/to/hg38.fa` to read sequence windows locally.
 
