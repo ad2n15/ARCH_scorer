@@ -52,3 +52,90 @@ def test_parse_variant():
     assert A.sbs6(v) == "T>G" and A.sbs6(A.parse_variant("1-100-A-G")) == "T>C"
     with pytest.raises(ValueError):
         A.parse_variant("20-32437597-TA-G")
+
+
+class _Head(torch.nn.Module):
+    """Stand-in head that returns a fixed logit per row."""
+
+    def __init__(self, logits):
+        super().__init__()
+        self.logits = torch.tensor(logits, dtype=torch.float32)
+
+    def forward(self, emb):
+        return self.logits[: len(emb)]
+
+
+def _fake_scorer(monkeypatch, logits):
+    """A Scorer with the released ntv3 heads' metadata but no backbone and no network."""
+    from arch_scorer.finetuned import predict as P
+
+    s = P.Scorer.__new__(P.Scorer)
+    s.name = "ntv3"
+    s.tasks, s.meta = {}, {}
+    real = P.Scorer.__init__
+
+    class _BB:
+        def __init__(self, *a, **k):
+            self.batch_size, self.device = 4, "cpu"
+
+    monkeypatch.setitem(P.BACKBONE_CLASSES, "ntv3", _BB)
+    real(s, "ntv3")
+    for t in s.tasks:
+        s.tasks[t]["head"] = _Head(logits)
+    ann = {"20-32437607-T-G": ("ASXL1", ["ASXL1"], "intronic", 12.0),
+           "1-1000000-C-T": ("HES4", ["HES4"], "intergenic", 2.0),
+           "2-25234373-C-T": ("DNMT3A", ["DNMT3A"], "exonic", None)}
+
+    def fake_annotate(v):
+        g, ov, func, cadd = ann[v.id]
+        return {"variant_id": v.id, "chrom": v.chrom, "pos": v.pos, "ref": v.ref, "alt": v.alt,
+                "mutation_type_raw": A.mutation_type(v), "mutation_type_sbs6": A.sbs6(v), "notes": [],
+                "func": func, "gene": g, "overlapping_genes": ov, "cadd_phred": cadd,
+                "exonic_func": "nonsynonymous SNV" if func == "exonic" else "."}
+
+    monkeypatch.setattr(P.A, "annotate", fake_annotate)
+    monkeypatch.setattr(P.Scorer, "embed", lambda self, vs, progress=None: (
+        torch.zeros(len(vs), 1536), [v.ref for v in vs]))
+    return s
+
+
+def test_thresholds_from_quantiles(monkeypatch):
+    s = _fake_scorer(monkeypatch, [0.0, 0.0, 0.0])
+    for t, m in s.meta.items():
+        q = json.loads((MODELS / "ntv3" / t / "score_quantiles.json").read_text())
+        for k, thr in m["threshold"].items():
+            assert q[k][0] <= thr <= q[k][-1]
+        assert 0 < m["prevalence"] < 0.5
+
+
+def test_flags_summary_and_html(monkeypatch, tmp_path):
+    from arch_scorer.finetuned.report import summary_table, write_html
+
+    s = _fake_scorer(monkeypatch, [6.0, -6.0, 6.0])
+    df = s.score(["20-32437607-T-G", "1-1000000-C-T", "2-25234373-C-T", "not-a-variant"])
+    for t in TASKS:
+        for _, r in df.iterrows():
+            score = r[f"{t}_score"]
+            if pd.isna(score):
+                assert r[f"{t}_flag"] in ("", None) or pd.isna(r[f"{t}_flag"])
+                continue
+            kind = r[f"{t}_score_type"]
+            assert (r[f"{t}_flag"] == "high") == (score >= s.meta[t]["threshold"][kind])
+            assert kind == ("fused" if not pd.isna(r[f"{t}_ntv3_plus_annotations"]) else "finetuned")
+    # ASXL1 variant: very high logit -> flagged; HES4 is outside the 21 genes -> no 21-gene score
+    asxl1 = df[df.variant_id == "20-32437607-T-G"].iloc[0]
+    assert asxl1["arch21_noncoding_flag"] == "high"
+    hes4 = df[df.variant_id == "1-1000000-C-T"].iloc[0]
+    assert pd.isna(hes4["arch21_cnc_score"]) and hes4["genomewide_flag"] == "-"
+    # missing CADD -> the fine-tuned score is the headline score
+    assert df[df.variant_id == "2-25234373-C-T"].iloc[0]["arch21_cnc_score_type"] == "finetuned"
+
+    text = summary_table(df, TASKS, s.meta)
+    assert "ARCH21-NC" in text and "HIGH" in text and "not scored" in text
+    assert max(len(line) for line in text.splitlines()[:6]) <= 120
+
+    df.loc[0, "notes"] = "<script>x</script>"
+    out = write_html(df, TASKS, s.meta, "ntv3", tmp_path / "r.html")
+    page = out.read_text()
+    assert page.count('class="card"') == len(df)
+    assert "<script>x</script>" not in page and "&lt;script&gt;" in page

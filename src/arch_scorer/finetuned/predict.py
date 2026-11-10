@@ -5,11 +5,13 @@
     s.score(["20-32437597-T-G"])             # DataFrame, one row per variant, one column pair per task
 
     arch-score-ft variants.txt --backbone ntv3 -o scores.csv     # one variant per line, or a VCF
+    arch-score-ft variants.txt --html report.html                # also write a readable HTML report
 """
 from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -20,6 +22,7 @@ from . import annotate as A
 from .backbones import BACKBONE_CLASSES, WINDOW
 from .fusion import FusionLR
 from .heads import load_head
+from .report import summary_table, write_html
 
 MODELS = Path(__file__).resolve().parents[3] / "models" / "finetuned"
 BACKBONES = tuple(BACKBONE_CLASSES)
@@ -66,7 +69,7 @@ class Scorer:
         if backbone not in BACKBONE_CLASSES:
             raise ValueError(f"backbone must be one of {BACKBONES}")
         self.name = backbone
-        self.tasks = {}
+        self.tasks, self.meta = {}, {}
         for t in tasks:
             d = Path(models_dir) / backbone / t
             head, cfg = load_head(d)
@@ -74,6 +77,11 @@ class Scorer:
             fus = d / "fusion.json"
             self.tasks[t] = {"head": head, "cfg": cfg, "fusion": FusionLR.load(fus) if fus.is_file() else None,
                              "quantiles": {k: np.asarray(v) for k, v in q.items()}}
+            m = json.loads((d / "test_metrics.json").read_text())
+            prev = m["n_pos"] / m["n"]
+            # prevalence-matched threshold (as in the paper): the score at the (1 - prevalence) test quantile
+            thr = {k: float(np.interp(100 * (1 - prev), np.linspace(0, 100, len(v)), v)) for k, v in q.items()}
+            self.meta[t] = {**m, "prevalence": prev, "threshold": thr}
         self.backbone = BACKBONE_CLASSES[backbone](model_path, device)
 
     @staticmethod
@@ -140,7 +148,23 @@ class Scorer:
             out[f"{t}_percentile"] = [self.percentile(qf, f) if (qf is not None and np.isfinite(f))
                                       else self.percentile(qp, x) for f, x in zip(fused, p)]
         out["notes"] = ["; ".join(n) for n in notes]
+        # headline score per task (fused where available, as the percentile), and a flag at the paper's threshold
+        for t, m in self.tasks.items():
+            col = f"{t}_{self.name}"
+            fused, ft = out[f"{col}_plus_annotations"].to_numpy(), out[col].to_numpy()
+            use_fused = np.isfinite(fused) & (m["quantiles"].get("fused") is not None)
+            thr = self.meta[t]["threshold"]
+            score = np.where(use_fused, fused, ft)
+            cut = np.where(use_fused, thr.get("fused", np.nan), thr["finetuned"])
+            out[f"{t}_score"] = score
+            out[f"{t}_score_type"] = np.where(np.isfinite(score), np.where(use_fused, "fused", "finetuned"), "")
+            out[f"{t}_flag"] = np.where(np.isfinite(score), np.where(score >= cut, "high", "-"), "")
         return pd.concat([out, pd.DataFrame(bad)], ignore_index=True) if bad else out
+
+
+def _progress(frac: float, desc: str = "") -> None:
+    end = "\n" if frac >= 1 else ""
+    print(f"\r{desc:<20} {100 * frac:5.1f}%", end=end, file=sys.stderr, flush=True)
 
 
 def main() -> None:
@@ -148,13 +172,35 @@ def main() -> None:
     ap.add_argument("variants", help="file with one variant per line (e.g. 20-32437597-T-G) or a VCF")
     ap.add_argument("--backbone", choices=BACKBONES, default="ntv3")
     ap.add_argument("--task", choices=TASKS, action="append", help="repeat to choose tasks (default: all)")
-    ap.add_argument("-o", "--out", default="arch_scores.csv")
+    ap.add_argument("-o", "--out", default="arch_scores.csv", help="CSV with every column (default: %(default)s)")
+    ap.add_argument("--html", default=None, metavar="PATH", help="also write a readable HTML report")
     ap.add_argument("--model-path", default=None, help="local backbone weights (default: download)")
     ap.add_argument("--device", default=None)
+    view = ap.add_mutually_exclusive_group()
+    view.add_argument("--full", action="store_true", help="print every column instead of the summary")
+    view.add_argument("--quiet", action="store_true", help="print no table, only where the files went")
     a = ap.parse_args()
-    df = Scorer(a.backbone, tuple(a.task or TASKS), a.model_path, a.device).score(read_variants(Path(a.variants)))
+    tasks = tuple(a.task or TASKS)
+    variants = read_variants(Path(a.variants))
+    log = (lambda *x: None) if a.quiet else (lambda *x: print(*x, file=sys.stderr, flush=True))
+    log(f"Loading {a.backbone} (the first run downloads the backbone weights; this can take a few minutes)")
+    scorer = Scorer(a.backbone, tasks, a.model_path, a.device)
+    log(f"Scoring {len(variants)} variant(s) on {scorer.backbone.device}")
+    df = scorer.score(variants, progress=None if a.quiet else _progress)
     df.to_csv(a.out, index=False)
-    print(df.to_string(index=False))
+    if a.full:
+        print(df.to_string(index=False))
+    elif not a.quiet:
+        print(summary_table(df, tasks, scorer.meta))
+    print(f"Wrote {len(df)} variants -> {a.out}", file=sys.stderr)
+    if a.html:
+        try:
+            from importlib.metadata import version
+            ver = version("arch-scorer")
+        except Exception:  # noqa: BLE001  (running from a source checkout)
+            ver = ""
+        write_html(df, tasks, scorer.meta, a.backbone, a.html, version=ver)
+        print(f"Wrote HTML report -> {a.html}", file=sys.stderr)
 
 
 if __name__ == "__main__":

@@ -79,10 +79,21 @@ from arch_scorer.finetuned import Scorer
 Scorer("ntv3").score(["20-32437597-T-G"])
 ```
 
+The terminal shows a short summary, with one row per variant and one column per task, and the CSV has every column. Add `--html report.html` for a readable report: a sortable summary, then one card per variant with percentile bars, scores and notes, then a "how to read this" section. `--full` prints every column instead of the summary, and `--quiet` prints only where the files went.
+
+A summary cell such as `0.412 p97 HIGH` gives:
+- the score;
+- its percentile among held-out test variants (mostly germline for the 21-gene tasks, and mostly other somatic for genome-wide);
+- `HIGH` when the score is above the prevalence-matched threshold used in the paper. This is the test-set quantile equal to 1 − the share of positives, for example p95 for `arch21_cnc`.
+
+`n/a` means the task does not apply, for example a variant outside the 21 genes.
+
 Output columns, for each task:
 - `<task>_<backbone>`: the fine-tuned score;
 - `<task>_<backbone>_plus_annotations`: the fused score;
-- `<task>_percentile`: the score's percentile among held-out test variants;
+- `<task>_percentile`: the percentile of `<task>_score` among held-out test variants;
+- `<task>_score`, `<task>_score_type`: the headline score, which is the fused score where all annotations are available and otherwise the fine-tuned score;
+- `<task>_flag`: `high` above the prevalence-matched threshold, `-` below it, and empty when the task does not apply;
 - `notes`: for example, outside the 21 genes, REF mismatch, or coding variant scored by the non-coding model.
 
 Annotations are fetched from free public APIs, with no keys needed:
