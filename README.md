@@ -83,6 +83,26 @@ Scorer("ntv3").score(["20-32437597-T-G"])
 
 The terminal shows a short summary, with one row per variant and one column per task, and the CSV has every column. Add `--html report.html` for a readable report: a sortable summary, then one card per variant with percentile bars, scores and notes, then a "how to read this" section. `--full` prints every column instead of the summary, and `--quiet` prints only where the files went.
 
+Options of `arch-score-ft`:
+
+| Option | Meaning | Default |
+|---|---|---|
+| `variants` | file with one variant per line (`chrom-pos-ref-alt`) or a VCF | required |
+| `--backbone` | `ntv3`, `borzoi` or `alphagenome` | `ntv3` |
+| `--task` | `arch21_noncoding`, `arch21_cnc` or `genomewide`; repeat to pick several | all three |
+| `-o`, `--out` | CSV with every column | `arch_scores.csv` |
+| `--html PATH` | also write a readable HTML report | off |
+| `--model-path` | local backbone weights instead of downloading them | download |
+| `--device` | for example `cuda` or `cpu` | chosen automatically |
+| `--no-gnomad` | skip the gnomAD v4.1 frequency, allele-balance and carrier-age lookup (it calls the public gnomAD API) | gnomAD on |
+| `--full` / `--quiet` | print every column, or print no table (cannot be combined) | summary table |
+
+For example, to score with Borzoi on the genome-wide task only, without the gnomAD lookup:
+
+```bash
+arch-score-ft variants.txt --backbone borzoi --task genomewide --no-gnomad -o scores.csv
+```
+
 A summary cell such as `0.412 p97 HIGH` gives:
 - the score;
 - its percentile among held-out test variants (mostly germline for the 21-gene tasks, and mostly other somatic for genome-wide);
