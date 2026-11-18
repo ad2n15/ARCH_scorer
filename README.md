@@ -71,8 +71,10 @@ pip install -e ".[paper]"         # redraw the paper's figures
 
 ```bash
 printf "20-32437597-T-G\n20-32437607-T-G\n" > variants.txt   # chrom-pos-ref-alt, or a VCF
-arch-score-ft variants.txt --backbone ntv3 -o scores.csv
+arch-score-ft variants.txt --backbone ntv3 -o scores.csv --html report.html
 ```
+
+This writes `scores.csv` (every column) and `report.html` (open it in a browser) in the current directory.
 
 ```python
 from arch_scorer.finetuned import Scorer
